@@ -2,7 +2,6 @@ const Professional = require('../models/Professional');
 
 const ProfessionalController = {
     create: async (req, res) => {
-        console.log(req.body);
         const {username, fullName, profession, years_of_experience, rating} = req.body;
         try {
             const newProfessional = await Professional.create({
@@ -18,7 +17,12 @@ const ProfessionalController = {
         }
     },
     getAll: async (req, res) => {
-
+        try {
+            const Professionals = await Professional.findAll();
+            res.status(201).json(Professionals);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     },
     getOne: async (req, res) => {
 
