@@ -7,6 +7,7 @@ app.get('/', (req, res) => {
     res.status(200).send("Welcome to Actor Hiring Backend!");
 })
 app.use('/professional', require('./Resources/routes/ProfessionalRoutes.js'));
+app.use('/film', require('./Resources/routes/FilmRoutes.js'))
 
 async function start() {
     try {
