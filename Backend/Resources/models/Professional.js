@@ -1,5 +1,8 @@
 const { Sequelize, DataTypes, DATE } = require('sequelize');
 const { db } = require('../../db/connectDB.js');
+const Film = require('./Films.js');
+const WorkedOn = require('./WorkedOn.js');
+
 
 const Professional = db.define(
     'Professional',
@@ -30,5 +33,6 @@ const Professional = db.define(
         updatedAt: false
     }
 );
+
 
 module.exports = Professional;

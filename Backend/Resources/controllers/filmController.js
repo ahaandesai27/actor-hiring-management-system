@@ -1,4 +1,6 @@
-const Film = require('../models/Film');
+const Film = require('../models/Films');
+const Professional = require('../models/Professional');
+require('../models/associations');
 
 const FilmController = {
     create: async (req, res) => {
@@ -30,6 +32,26 @@ const FilmController = {
         try {
             const { film_id } = req.params;
             const film = await Film.findByPk(film_id);
+            if (!film) {
+                return res.status(404).json({ message: "Film not found." });
+            }
+            res.status(200).json(film);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    getProfessionals: async (req, res) => {
+        try {
+            const { film_id } = req.params;
+            const film = await Film.findOne({
+                where: {film_id},
+                attributes: ['film_id', 'title'],
+                include: {
+                    model: Professional,
+                    attributes: ['username', 'rating'],
+                    through: {attributes: ['start_date', 'end_date']}
+                }
+            });
             if (!film) {
                 return res.status(404).json({ message: "Film not found." });
             }

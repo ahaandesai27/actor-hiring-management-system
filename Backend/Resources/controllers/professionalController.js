@@ -1,4 +1,6 @@
 const Professional = require('../models/Professional');
+const Film = require('../models/Films');
+require('../models/associations');
 
 const ProfessionalController = {
     create: async (req, res) => {
@@ -24,11 +26,30 @@ const ProfessionalController = {
             res.status(500).json({ error: error.message });
         }
     },
+
     getOne: async (req, res) => {
         try {
             const {username} = req.params;
             const professional = await Professional.findByPk(username);
             res.status(200).json(professional);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getFilms: async (req, res) => {
+        try {
+          const {username} = req.params;
+          const professional = await Professional.findOne({
+            where: { username },
+            attributes: ['username'],
+            include: {
+                model: Film,
+                attributes: ['title', 'genre', 'release_date', 'rating'],        // include film fields
+                through: { attributes: ['start_date', 'end_date'] }              // worked on fields
+            },
+          })
+          res.status(200).json(professional);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
