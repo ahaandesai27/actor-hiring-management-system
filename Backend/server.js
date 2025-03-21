@@ -8,6 +8,7 @@ app.get('/', (req, res) => {
 })
 app.use('/professional', require('./Resources/routes/ProfessionalRoutes.js'));
 app.use('/film', require('./Resources/routes/FilmRoutes.js'))
+app.use('/connections', require('./Resources/routes/ConnectionRoutes.js'));
 
 async function start() {
     try {

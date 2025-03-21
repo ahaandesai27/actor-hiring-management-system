@@ -1,5 +1,6 @@
 const Professional = require('../models/Professional');
 const Film = require('../models/Films');
+const connectionsController = require('../controllers/connectionsController');
 require('../models/associations');
 
 const ProfessionalController = {
@@ -13,7 +14,6 @@ const ProfessionalController = {
                 years_of_experience,
                 rating
             });
-            res.status(201).json(newProfessional);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -29,13 +29,26 @@ const ProfessionalController = {
 
     getOne: async (req, res) => {
         try {
-            const {username} = req.params;
-            const professional = await Professional.findByPk(username);
-            res.status(200).json(professional);
+          const { username } = req.params;
+          const professional = await Professional.findByPk(username);
+      
+          if (!professional) {
+            return res.status(404).json({ message: 'Professional not found' });
+          }
+      
+          const followerCount = await connectionsController.getFollowersCount(professional.username);
+          const followingCount = await connectionsController.getFollowingCount(professional.username);
+      
+          res.status(200).json({
+            followerCount,
+            followingCount,
+            ...professional.get() // extracts clean dataValues only
+          });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+          res.status(500).json({ error: error.message });
         }
-    },
+      },
+      
 
     getFilms: async (req, res) => {
         try {
@@ -54,6 +67,7 @@ const ProfessionalController = {
             res.status(500).json({ error: error.message });
         }
     },
+                                    
     update: async (req, res) => {
         try {
             const {username} = req.params;
