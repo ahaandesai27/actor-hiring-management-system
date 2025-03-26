@@ -4,14 +4,15 @@ import viteLogo from '/vite.svg'
 import Header from './components/Header'
 import SubContent from './components/SubContent'
 import MainContents from './components/MainContents'
+import NewHeader from './components/NewHeader';
 import './App.css'
 
 function App() {
 
   return (
     <>
-      <Header />
-      <SubContent />
+      <NewHeader />
+      {/* <SubContent /> */}
       <MainContents />
     </>
   )

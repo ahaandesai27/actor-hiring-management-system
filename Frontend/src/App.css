@@ -1,8 +1,6 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -151,12 +149,6 @@
 .subcontent-row select:focus {
   border-color: #007bff;
   outline: none;
-}
-
-@media (max-width: 400px) {
-  .subcontent-container {
-    width: 100%;
-  }
 }
 
 /* Main Container */
