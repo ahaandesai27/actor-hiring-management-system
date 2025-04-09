@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import '../../src/App.css'
 
 const SubContent = () => {
     const [profession, setProfession] = useState("Actor");
