@@ -29,7 +29,8 @@ const Film = db.define('Film', {
     },
 }, {
     tableName: 'films',
-    timestamps: false
+    timestamps: false,
+    updatedAt: true
 });
 
 module.exports = Film;

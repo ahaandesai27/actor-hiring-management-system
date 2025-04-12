@@ -45,7 +45,8 @@ const roles = db.define('Roles',{
     }
 },{
     tableName: "roles",
-    timestamps: true
+    timestamps: true,
+    updatedAt: true
 })
 
 module.exports = roles;
