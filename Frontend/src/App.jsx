@@ -1,21 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import Header from './components/Header'
-import SubContent from './components/SubContent'
-import MainContents from './components/MainContents'
-import NewHeader from './components/NewHeader';
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProfilePage from "./components/ProfilePage";
+import AddRole from './components/AddRole/AddRole';
+import EditProfile from './components/EditProfile/EditProfile';
+import Login from './components/Login/Login';
+import RolePage from './components/RolePage/RolePage';
+import SignIn from './components/SignIn/SignIn';
+
+import './App.css';
 
 function App() {
-
   return (
-    <>
-      <NewHeader />
-      {/* <SubContent /> */}
-      <MainContents />
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<ProfilePage />} />
+        <Route path="/add-role" element={<AddRole />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/role-page" element={<RolePage />} />
+        <Route path="/sign-in" element={<SignIn />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
