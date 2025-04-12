@@ -1,5 +1,7 @@
 const Professional = require('../models/Professional');
 const Film = require('../models/Films');
+const roles = require('../models/Roles.js');
+const Applications = require('../models/Applications.js');
 const connectionsController = require('../controllers/connectionsController');
 require('../models/associations');
 
@@ -68,7 +70,53 @@ const ProfessionalController = {
             res.status(500).json({ error: error.message });
         }
     },
-                                    
+
+    applyForRole: async(req, res) => {
+        // setting this up as a query string route
+        try {
+            const username = req.query.username;
+            const role_id = parseInt(req.query.role_id);
+            const professional = await Professional.findByPk(username);
+            const role = await roles.findByPk(role_id);
+            if (!professional || !role) {
+                res.status(404)
+                   .json({error: "Professional or role not found"});
+            }
+            else if (professional.profession !== role.role_for) {
+                res.status(403)
+                   .json({forbidden: "Cannot apply for this role!"});
+                 }
+            await Applications.create({professional: username, role_id});
+            res.status(201)
+               .json({success: "Applied successfully!"}); 
+        }  catch (error) {
+            res.status(500).json({ error: error.message });
+           }   
+    },
+
+    withdrawApplication: async (req, res) => {
+        try {
+            const username = req.query.username;
+            const role_id = parseInt(req.query.role_id);
+    
+            // Check if the application exists
+            const application = await Applications.findOne({
+                where: { professional: username, role_id }
+            });
+    
+            if (!application) {
+                return res.status(404).json({ error: "Application not found" });
+            }
+    
+            // Delete the application
+            await application.destroy();
+    
+            res.status(200).json({ success: "Application withdrawn successfully!" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    
     update: async (req, res) => {
         try {
             const {username} = req.params;
