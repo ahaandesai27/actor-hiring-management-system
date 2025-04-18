@@ -150,7 +150,32 @@ const ProfessionalController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+    getByUsername: async (req, res) => {
+        const { username } = req.body; // assuming you'll send username in request body
+        
+        try {
+            const professional = await Professional.findOne({
+                where: { username }
+            });
+
+            if (!professional) {
+                return res.status(404).json({ message: 'Username not found' });
+            }
+            
+            // If you want to also check the password, you can compare it here
+            // const isPasswordCorrect = bcrypt.compareSync(password, professional.password);
+            // if (!isPasswordCorrect) {
+            //     return res.status(401).json({ message: 'Invalid password' });
+            // }
+            
+            res.status(200).json({ message: 'Username exists' }); // or send back professional details
+        } catch (error) {
+            // whatever error is obtained will be put here
+            res.status(500).json({ error: error.message });
+        }
     }
+
 }
 
 module.exports = ProfessionalController;

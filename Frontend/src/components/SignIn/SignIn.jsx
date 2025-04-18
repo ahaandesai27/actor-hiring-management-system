@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card"
 import "./SignInstyles.css";
 
 function SignIn() {
@@ -22,28 +19,30 @@ function SignIn() {
     // actual function logic here:
     return (
         <div className="signin-wrapper">
-            <Card className="signin-card">
-                <CardContent>
+            <div className="signin-card">
+                <div className="signin-card-content">
                     <h2 className="title">Sign-In</h2>
                     <form onSubmit={HandleSignIn} className="signin-form">
-                        <Input 
+                        <input
                             type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            className="signin-input"
                         />
-                        <Input
+                        <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            className="signin-input"
                         />
-                        <Button type="submit" className="signin-button">Sign In</Button>
+                        <button type="submit" className="signin-button">Sign In</button>
                     </form>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     );
 }

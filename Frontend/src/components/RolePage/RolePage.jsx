@@ -1,6 +1,4 @@
 import React, { useActionState, useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import './RolePagestyles.css'
 
 function RolePage() {
@@ -36,28 +34,29 @@ function RolePage() {
         <div>
             <div className="roles-wrapper">
                 <h2 className="roles-header">Available Roles</h2>
-                <Button onClick={sortRolesByDate}>Sort By Date</Button>
+                <button className="sort-button" onClick={sortRolesByDate}>Sort By Date</button>
             </div>
             {/* the map is used to go thru each element obtained from
-                the DB
-                it is all wrapped inside a Card element
-                the key={index} is required so that react can identify them
-                the .toLocaleString() is used to convert it into readable date */}
+                    the DB
+                    it is all wrapped inside a Card element
+                    the key={index} is required so that react can identify them
+                    the .toLocaleString() is used to convert it into readable date */}
             <div className="roles-list">
                 {roles.map((role, index) => (
-                    <Card key={index} className="role-card">
-                        <CardContent>
+                    <div key={index} className="role-card">
+                        <div className="role-card-content">
                             <h3 className="movie-name">{role.movieName}</h3>
-                            <p><strong>Role Type:</strong>{role.name}</p>
-                            <p><strong>Creator</strong>{role.creator}</p>
-                            <p><strong>Pay</strong>{role.pay}</p>
-                            <p><strong>Creation Date:</strong>{new Date(role.date).toLocaleDateString()}</p>
-                        </CardContent>
-                    </Card>
+                            <p><strong>Role Type:</strong> {role.name}</p>
+                            <p><strong>Creator:</strong> {role.creator}</p>
+                            <p><strong>Pay:</strong> {role.pay}</p>
+                            <p><strong>Creation Date:</strong> {new Date(role.date).toLocaleDateString()}</p>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
     );
 }
+
 
 export default RolePage
