@@ -1,4 +1,5 @@
 import { useState } from "react";
+import './styles.css'
 // the usestate is used to create hooks for consistent rendering
 // [state, stateFunc] = useState(initialState) is the general initialization
 // format for the useState

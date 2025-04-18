@@ -1,10 +1,12 @@
-import { useState } from "react"
-import './NewHeaderStyles.css';
+import { useState
+       ,  useEffect 
+       } from "react"
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import './styles.css';
 
 
-const Header = () => {
-    
-    const [username, setUsername] = useState('iamsrk');
+const Header = ({username}) => {
     const [name, setName] = useState('Shah Rukh Khan');
     const [profession, setProfession] = useState('Actor');
     const [yoe, setYoe] = useState('25');
@@ -14,33 +16,52 @@ const Header = () => {
     const [workingAt, setWorkingAt] = useState("XYZ ORG");
     const [ownerOf, setOwnerOf] = useState("ABC ORG");
     const [imageUrl, setImageUrl] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+    const [about, setAbout] = useState("About me.")
 
-    const [about, setAbout] = useState("I am SRK.")
+    useEffect(() => {
+        async function fetchProfessional() {
+            try {
+                const response = await axios.get(`http://localhost:5000/professional/${username}`);
+                const professionalData = response.data;
+                setName(professionalData.full_name);
+                setProfession(professionalData.profession.charAt(0).toUpperCase() + professionalData.profession.slice(1));
+                setYoe(professionalData.years_of_experience);
+                setRating(professionalData.rating);
+                setFollowers(professionalData.followerCount);
+                setFollowing(professionalData.followingCount);
+            } catch (error) {
+                alert(error);
+                console.log(error);
+            }
+        }
+        
+        fetchProfessional();
+    }, [username]);
 
 
-    return <div style={{marginLeft: '8rem'}}>
-        <div style={{display: 'flex'}}>
-            <div className="pfp">
-                <img src={imageUrl} alt='Profile Picture' />
+    return <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+                <div className="pfp" style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden' }}>
+                    <img src={imageUrl} alt='Profile Picture' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div>
+                    <div style={{ fontSize: '30px', fontWeight: 'bold', color: '#333' }}>@{username}</div>
+                    <div style={{ fontSize: '20px', color: '#555' }}>{name}</div>
+                </div>
             </div>
-            <div>
-                <div style={{fontSize: '30px'}}>@{username}</div><br />
-                <div>{name}</div>
+            <div style={{ fontSize: '1.2rem', marginTop: '20px', color: '#666' }}>
+                <div>{profession} | {yoe}+ Years of Experience | <b>{rating}/10</b></div>
+                <div>Currently working at <b>{workingAt}</b></div>
+                <div>Owner of <b>{ownerOf}</b></div>
             </div>
-        </div>
-        <div style={{fontSize: '1.2rem', marginTop: '1rem'}}>
-            <div>{profession} | {yoe}+ Years of Experience | <b>{rating}/10</b></div> 
-            <div> Currently working at <b>{workingAt}</b></div> 
-            <div> Owner of <b>{ownerOf}</b> </div> 
-        </div>
-
-        <div style={{ fontSize: '1rem', marginTop: '1rem', display: 'flex', gap: '2rem' }}>
-            <u><b>{followers}</b> Followers</u>
-            <u><b>{following}</b> Following</u>
+            <div style={{ fontSize: '1rem', marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '40px', color: '#777' }}>
+                <u><b>{followers}</b> Followers</u>
+                <u><b>{following}</b> Following</u>
+            </div>
+            {/* Please add the about me section, use textarea or something */}
         </div>
 
-        {/* Please add the about me section, use textarea or something */}
-    </div>
+
 
                }
 
