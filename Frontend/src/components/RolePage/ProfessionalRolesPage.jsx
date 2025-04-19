@@ -1,12 +1,15 @@
 import React, { useActionState, useEffect, useState } from "react";
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import useUser from "../User/user";
 import './RolePageStyles.css';
 
 function RolePage() {
     // initially empty
     const [roles, setRoles] = useState([])
     const {username} = useParams();
+    const loggedinUsername = useUser().userName;
+    
     // initially false
     const [sortedByDate, setSortByDate] = useState(false)
     
@@ -70,17 +73,18 @@ function RolePage() {
                             <p><strong>Start Date:</strong> {new Date(role.start_date).toLocaleDateString()}</p>
                             <p><strong>Start Date:</strong> {new Date(role.end_date).toLocaleDateString()}</p>
 
-                            <button style={{ width: '160px', textAlign: 'left', padding: '8px 12px', marginTop: '10px'
+                            {username !== loggedinUsername && <button style={{ width: '160px', textAlign: 'left', padding: '8px 12px', marginTop: '10px'
                                            ,  'backgroundColor': 'blue' 
                                            }} onClick={() => {applyForRole(role.role_id, role.role_for)}}>
                                 <div align='center'>
                                     Apply for role
                                 </div>
                                 {/* this button will be disabled if looking at own roles*/}
-                            </button>
+                            </button>}
 
-                            <button
-                                onClick={() => window.location.href = `http://localhost:5173/roles/${role.role_id}/applicants`}
+                            { username === loggedinUsername && 
+                            <button onClick={() =>
+                                window.location.href = `http://localhost:5173/roles/${role.role_id}/applicants`}
                                 style={{
                                     padding: '8px 12px',
                                     backgroundColor: '#28a745',
@@ -92,9 +96,10 @@ function RolePage() {
                                 }}
                             >   
                                 <div align='center'>View Applicants</div>
+                            </button>
+                            }
                                 
                                 {/* this button will be disabled if others are looking*/}
-                            </button>
                         </div>
                     </div>
                 ))}
