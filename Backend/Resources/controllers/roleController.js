@@ -1,5 +1,7 @@
 const roles = require("../models/Roles");
 const Professional = require("../models/Professional");
+const Film = require('../models/Films');
+
 require('../models/associations');
 
 const RoleController = {
@@ -53,6 +55,28 @@ const RoleController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+    getAll: async (req, res) => {
+        try {
+            const role = await roles.findAll({
+                include: {
+                    model: Film,
+                    attributes: ['film_id', 'title']
+                },
+                attributes: {
+                    exclude: ['film_id']
+                },
+            });
+            
+
+            if (!role) {
+                return res.status(404).json({ message: "Role not found!" });
+            } else {
+                return res.status(200).json(role);
+            }
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }    
     },
     getOne: async (req, res) => {
         const { role_id } = req.params;

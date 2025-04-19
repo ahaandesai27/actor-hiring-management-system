@@ -1,10 +1,12 @@
 import React, { useActionState, useEffect, useState } from "react";
 import axios from 'axios';
-import './RolePagestyles.css'
+import { useParams } from "react-router-dom";
+import './RolePageStyles.css';
 
 function RolePage() {
     // initially empty
     const [roles, setRoles] = useState([])
+    const {username} = useParams();
     // initially false
     const [sortedByDate, setSortByDate] = useState(false)
     
@@ -16,7 +18,7 @@ function RolePage() {
     // ie. when first opened or reloaded 
     useEffect(() => {
         // put the actual db path here
-        fetch('http://localhost:5000/roles')    
+        fetch(`http://localhost:5000/professional/${username}/created_roles`)    
         .then((res) => res.json())
         .then((data) => setRoles(data));
     }, [])
@@ -49,7 +51,7 @@ function RolePage() {
     return (
         <div>
             <div className="roles-wrapper">
-                <h2 className="roles-header">Available Roles</h2>
+                <h2 className="roles-header">{username}'s Roles</h2>
                 <button className="sort-button" onClick={sortRolesByDate}>Sort By Date</button>
             </div>
             {/* the map is used to go thru each element obtained from
@@ -63,16 +65,35 @@ function RolePage() {
                         <div className="role-card-content">
                             <h3 className="movie-name">{role.Film.title}</h3>
                             <p><strong>Role Type:</strong> {role.information}</p>
-                            <p><strong>Creator:</strong> {role.creator}</p>
                             <p><strong>Pay:</strong> {role.pay}</p>
                             <p><strong>Role for:</strong>{role.role_for}</p>
                             <p><strong>Start Date:</strong> {new Date(role.start_date).toLocaleDateString()}</p>
                             <p><strong>Start Date:</strong> {new Date(role.end_date).toLocaleDateString()}</p>
 
-                            <button style={{ width: '140px', textAlign: 'left', padding: '8px 12px', marginTop: '10px' }} onClick={() => {applyForRole(role.role_id, role.role_for)}}>
+                            <button style={{ width: '160px', textAlign: 'left', padding: '8px 12px', marginTop: '10px'
+                                           ,  'backgroundColor': 'blue' 
+                                           }} onClick={() => {applyForRole(role.role_id, role.role_for)}}>
                                 <div align='center'>
                                     Apply for role
                                 </div>
+                                {/* this button will be disabled if looking at own roles*/}
+                            </button>
+
+                            <button
+                                onClick={() => window.location.href = `http://localhost:5173/roles/${role.role_id}/applicants`}
+                                style={{
+                                    padding: '8px 12px',
+                                    backgroundColor: '#28a745',
+                                    width: '160px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    marginTop: '10px'
+                                }}
+                            >   
+                                <div align='center'>View Applicants</div>
+                                
+                                {/* this button will be disabled if others are looking*/}
                             </button>
                         </div>
                     </div>

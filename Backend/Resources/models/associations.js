@@ -20,5 +20,13 @@ const roles = require('./Roles.js');
 const Applications = require('./Applications.js');
 Professional.belongsToMany(roles, {through: Applications, foreignKey: 'professional', otherKey: 'role_id'});
 roles.belongsToMany(Professional, {through: Applications, foreignKey: 'role_id', otherKey: 'professional'});
-
+Professional.hasMany(roles, {
+  foreignKey: 'creator',
+  as: 'createdRoles'
+});
+roles.belongsTo(Professional, {
+  foreignKey: 'creator',
+  as: 'creatorDetails'
+});
+roles.belongsTo(Film, { foreignKey: 'film_id' });
 // organizations books locations

@@ -72,10 +72,9 @@ const ProfessionalController = {
     },
 
     applyForRole: async(req, res) => {
-        // setting this up as a query string route
         try {
-            const username = req.query.username;
-            const role_id = parseInt(req.query.role_id);
+            const username = req.body.username;
+            const role_id = parseInt(req.body.role_id);
             const professional = await Professional.findByPk(username);
             const role = await roles.findByPk(role_id);
             if (!professional || !role) {
@@ -174,7 +173,34 @@ const ProfessionalController = {
             // whatever error is obtained will be put here
             res.status(500).json({ error: error.message });
         }
+    },
+
+    getCreatedRoles: async (req, res) => {
+        try {
+            const { username } = req.params;
+    
+            const createdRoles = await roles.findAll({
+                where: { creator: username },
+                include: {
+                    model: Film,
+                    attributes: ['film_id', 'title']
+                },
+                attributes: {
+                    exclude: ['film_id']
+                }
+            });
+    
+            if (!createdRoles || createdRoles.length === 0) {
+                return res.status(404).json({ message: 'No roles found for this professional' });
+            }
+    
+            return res.status(200).json(createdRoles);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
+    
+    
 
 }
 

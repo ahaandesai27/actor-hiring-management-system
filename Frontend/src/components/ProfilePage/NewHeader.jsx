@@ -1,12 +1,9 @@
-import { useState
-       ,  useEffect 
-       } from "react"
+import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './styles.css';
 
-
-const Header = ({username}) => {
+const Header = ({ username }) => {
     const [name, setName] = useState('Shah Rukh Khan');
     const [profession, setProfession] = useState('Actor');
     const [yoe, setYoe] = useState('25');
@@ -16,7 +13,7 @@ const Header = ({username}) => {
     const [workingAt, setWorkingAt] = useState("XYZ ORG");
     const [ownerOf, setOwnerOf] = useState("ABC ORG");
     const [imageUrl, setImageUrl] = useState("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
-    const [about, setAbout] = useState("About me.")
+    const [about, setAbout] = useState("About me.");
 
     useEffect(() => {
         async function fetchProfessional() {
@@ -38,8 +35,8 @@ const Header = ({username}) => {
         fetchProfessional();
     }, [username]);
 
-
-    return <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
+    return (
+        <div style={{ textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
                 <div className="pfp" style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden' }}>
                     <img src={imageUrl} alt='Profile Picture' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -58,12 +55,26 @@ const Header = ({username}) => {
                 <u><b>{followers}</b> Followers</u>
                 <u><b>{following}</b> Following</u>
             </div>
-            {/* Please add the about me section, use textarea or something */}
+            {(profession === "Director" || profession === "Producer") && (
+                <button
+                    onClick={() => window.location.href = `http://localhost:5173/profile/${username}/roles`}
+                    style={{
+                        position: 'absolute',
+                        top: '20px',
+                        right: '20px',
+                        padding: '10px 20px',
+                        backgroundColor: '#007BFF',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                    }}
+                >
+                    View all Roles
+                </button>
+            )}
         </div>
-
-
-
-               }
-
+    );
+};
 
 export default Header;
