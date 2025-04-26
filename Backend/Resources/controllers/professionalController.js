@@ -16,8 +16,10 @@ const ProfessionalController = {
                 years_of_experience,
                 rating
             });
+            res.status(201)
+               .json(newProfessional);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({ error: error.message });
         }
     },
     getAll: async (req, res) => {
@@ -78,18 +80,18 @@ const ProfessionalController = {
             const professional = await Professional.findByPk(username);
             const role = await roles.findByPk(role_id);
             if (!professional || !role) {
-                res.status(404)
+                return res.status(404)
                    .json({error: "Professional or role not found"});
             }
             else if (professional.profession !== role.role_for) {
-                res.status(403)
+                return res.status(403)
                    .json({forbidden: "Cannot apply for this role!"});
                  }
             await Applications.create({professional: username, role_id});
-            res.status(201)
+            return res.status(201)
                .json({success: "Applied successfully!"}); 
         }  catch (error) {
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({ error: error.message });
            }   
     },
 

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+//setup as context api later
+
 const useUser = () => {
   const [userName, setUserName] = useState(localStorage.getItem('user_id') || '');
   const [userRole, setUserRole] = useState(localStorage.getItem('user_role') || '');

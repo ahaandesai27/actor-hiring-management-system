@@ -31,9 +31,9 @@ const RoleController = {
             });
 
             if (deletedRows === 0) {
-                res.status(404).json({ message: "Role not found!!!" });
+                return res.status(404).json({ message: "Role not found!" });
             }
-            res.status(200).json({ message: "Role deleted successfully" });
+            return res.status(200).json({ message: "Role deleted successfully" });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
