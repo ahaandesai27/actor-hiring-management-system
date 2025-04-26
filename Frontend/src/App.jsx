@@ -1,25 +1,27 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProfilePage from "./components/ProfilePage";
-import AddRole from './components/AddRole/AddRole';
-import EditProfile from './components/EditProfile/EditProfile';
+import NewHeader from './components/NewHeader/NewHeader';
+import './App.css'
+import { Routes, Route } from 'react-router-dom';
 import Login from './components/Login/Login';
-import RolePage from './components/RolePage/RolePage';
-import SignIn from './components/SignIn/SignIn';
-
-import './App.css';
+import ProfilePage from './components/ProfilePage';
+import ViewRoleApplicants from './components/RolePage/ViewRoleApplicants.jsx';
+import RolePage from './components/RolePage/RolePage.jsx';
+import ProfessionalRolesPage from './components/RolePage/ProfessionalRolesPage.jsx';
+import useUser from './components/User/user.js';
+import { useEffect } from 'react';
 
 function App() {
+  const {updateUser} = useUser();
+
+  useEffect(() => updateUser('iamsrk', 'actor'));
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<ProfilePage />} />
-        <Route path="/add-role" element={<AddRole />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/role-page" element={<RolePage />} />
-        <Route path="/sign-in" element={<SignIn />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
+      <Route path="/profile/:username/roles" element={<ProfessionalRolesPage />} />
+      <Route path="/profile/:username" element={<ProfilePage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path='/roles' element={<RolePage />} />
+    </Routes>
   );
 }
 

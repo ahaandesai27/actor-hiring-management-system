@@ -43,7 +43,7 @@ const FilmController = {
     getProfessionals: async (req, res) => {
         try {
             const { film_id } = req.params;
-            const film = await Film.findOne({
+            const film = await Film.find({
                 where: {film_id},
                 attributes: ['film_id', 'title'],
                 include: {

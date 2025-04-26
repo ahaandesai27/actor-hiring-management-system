@@ -1,44 +1,39 @@
-.roles-wrapper {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    font-family: Arial, sans-serif;
-  }
-  
-  .roles-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .roles-header h2 {
-    font-size: 1.8rem;
-    font-weight: bold;
-  }
-  
-  .roles-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .role-card {
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-    background-color: #fff;
-  }
-  
-  .movie-name {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  /* for the paragraphs */
-  .role-card p {
-    margin: 0.3rem 0;
-    color: #333;
-  }
-  
+.role-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin: 16px 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.role-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.movie-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.role-card-content p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #4a5568;
+}
+
+.role-card-content strong {
+  color: #2d3748;
+}

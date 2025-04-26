@@ -1,5 +1,7 @@
 const Professional = require('../models/Professional');
 const Film = require('../models/Films');
+const roles = require('../models/Roles.js');
+const Applications = require('../models/Applications.js');
 const connectionsController = require('../controllers/connectionsController');
 require('../models/associations');
 
@@ -14,8 +16,10 @@ const ProfessionalController = {
                 years_of_experience,
                 rating
             });
+            res.status(201)
+               .json(newProfessional);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({ error: error.message });
         }
     },
     getAll: async (req, res) => {
@@ -68,7 +72,52 @@ const ProfessionalController = {
             res.status(500).json({ error: error.message });
         }
     },
-                                    
+
+    applyForRole: async(req, res) => {
+        try {
+            const username = req.body.username;
+            const role_id = parseInt(req.body.role_id);
+            const professional = await Professional.findByPk(username);
+            const role = await roles.findByPk(role_id);
+            if (!professional || !role) {
+                return res.status(404)
+                   .json({error: "Professional or role not found"});
+            }
+            else if (professional.profession !== role.role_for) {
+                return res.status(403)
+                   .json({forbidden: "Cannot apply for this role!"});
+                 }
+            await Applications.create({professional: username, role_id});
+            return res.status(201)
+               .json({success: "Applied successfully!"}); 
+        }  catch (error) {
+            return res.status(500).json({ error: error.message });
+           }   
+    },
+
+    withdrawApplication: async (req, res) => {
+        try {
+            const username = req.query.username;
+            const role_id = parseInt(req.query.role_id);
+    
+            // Check if the application exists
+            const application = await Applications.findOne({
+                where: { professional: username, role_id }
+            });
+    
+            if (!application) {
+                return res.status(404).json({ error: "Application not found" });
+            }
+    
+            // Delete the application
+            await application.destroy();
+    
+            res.status(200).json({ success: "Application withdrawn successfully!" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    
     update: async (req, res) => {
         try {
             const {username} = req.params;
@@ -102,7 +151,59 @@ const ProfessionalController = {
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
+    },
+    getByUsername: async (req, res) => {
+        const { username } = req.body; // assuming you'll send username in request body
+        
+        try {
+            const professional = await Professional.findOne({
+                where: { username }
+            });
+
+            if (!professional) {
+                return res.status(404).json({ message: 'Username not found' });
+            }
+            
+            // If you want to also check the password, you can compare it here
+            // const isPasswordCorrect = bcrypt.compareSync(password, professional.password);
+            // if (!isPasswordCorrect) {
+            //     return res.status(401).json({ message: 'Invalid password' });
+            // }
+            
+            res.status(200).json({ message: 'Username exists' }); // or send back professional details
+        } catch (error) {
+            // whatever error is obtained will be put here
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getCreatedRoles: async (req, res) => {
+        try {
+            const { username } = req.params;
+    
+            const createdRoles = await roles.findAll({
+                where: { creator: username },
+                include: {
+                    model: Film,
+                    attributes: ['film_id', 'title']
+                },
+                attributes: {
+                    exclude: ['film_id']
+                }
+            });
+    
+            if (!createdRoles || createdRoles.length === 0) {
+                return res.status(404).json({ message: 'No roles found for this professional' });
+            }
+    
+            return res.status(200).json(createdRoles);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
+    
+    
+
 }
 
 module.exports = ProfessionalController;

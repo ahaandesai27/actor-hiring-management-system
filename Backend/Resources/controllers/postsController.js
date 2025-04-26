@@ -1,4 +1,6 @@
 const Post = require('../models/Posts');
+const Comment = require('../models/Comments');
+
 const PostController = {
     create: async (req, res) => {
         const { post_id, contents, creator} = req.body;
@@ -45,6 +47,20 @@ const PostController = {
             res.status(500).json({ error: error.message });
           }
                   },
+    getComments: async (req, res) => {
+        try {
+          const {post} = req.params;
+          const comments = await Comment.find({
+            where: [post]
+          });
+          res.status(200)
+             .json(comments);
+
+        } catch (error) {
+            res.status(500)
+               .json({error: error.message})
+          }                        
+    },
     update: async (req, res) => {
         try {
             const { post_id } = req.params;
