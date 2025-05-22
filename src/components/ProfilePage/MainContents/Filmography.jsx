@@ -1,38 +1,8 @@
 import React, { useState
               ,  useEffect 
               } from "react";
-import axios from 'axios';
-import './styles.css'
+import axios from "axios";
 
-const MainContents = ({username}) => {
-  const [activeTab, setActiveTab] = useState("filmography");
-
-  return (
-    <div className="main-container">
-      {/* Navigation Bar */}
-      <nav className="nav-bar">
-        <button className={activeTab === "filmography" ? "active" : ""} onClick={() => setActiveTab("filmography")}>
-          Filmography
-        </button>
-        <button className={activeTab === "posts" ? "active" : ""} onClick={() => setActiveTab("posts")}>
-          Posts
-        </button>
-        <button className={activeTab === "likes" ? "active" : ""} onClick={() => setActiveTab("likes")}>
-          Likes
-        </button>
-      </nav>
-
-      {/* Content Section */}
-      <div className="content-section">
-        {activeTab === "filmography" && <Filmography username = {username}/>}
-        {activeTab === "posts" && <Posts />}
-        {activeTab === "likes" && <Likes />}
-      </div>
-    </div>
-  );
-};
-
-// Filmography Component
 const Filmography = ({ username }) => {
   const [films, setFilms] = useState([]);
 
@@ -88,32 +58,5 @@ const Filmography = ({ username }) => {
     </div>
   );
 };
-// Posts Component
-const Posts = () => {
-  return (
-    <div className="posts-container">
-      <h2>Recent Post</h2>
-      <div className="post-box">
-        <p className="post-text">This is a sample post...</p>
-        <img className="post-image" src="" alt="Post" />
-      </div>
-      <a href="/all-posts" className="view-all-posts">View All Posts</a>
-    </div>
-  );
-};
 
-// Likes Component
-const Likes = () => {
-  return (
-    <div className="likes-container">
-      <h2>Likes</h2>
-      <p className="total-likes">Total Likes: </p>
-      <div className="recent-likes">
-        <p className="liked-by-others">Most recent message liked by others:</p>
-        <p className="liked-by-user">Most recent message you liked:</p>
-      </div>
-    </div>
-  );
-};
-
-export default MainContents;
+export default Filmography;

@@ -154,18 +154,18 @@
 .main-container {
   width: 100%;
   max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
 /* Navigation Bar */
 .nav-bar {
+  width: 100vw;
   display: flex;
   justify-content: center;
   gap: 20px;
   padding: 10px;
-  border-bottom: 2px solid #ccc;
+  border-top: 2px solid rgb(206, 206, 206);
+  box-sizing: border-box;
 }
 
 .nav-bar button {
@@ -180,7 +180,7 @@
 .nav-bar button:hover,
 .nav-bar .active {
   font-weight: bold;
-  color: #007bff;
+  color: #D4AF37;
 }
 
 /* Content Section */
@@ -197,7 +197,7 @@
 
 .film-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   width: 100%;
   max-width: 600px;
@@ -232,6 +232,7 @@
 /* Posts Section */
 .posts-container {
   text-align: center;
+  height: 100%;
 }
 
 .post-box {
