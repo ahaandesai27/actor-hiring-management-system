@@ -43,14 +43,20 @@ const Header = ({ username }) => {
   }, [username]);
 
   return (
-    <div className="bg-black text-white px-10 py-10">
+    <div className="bg-gray text-white px-10 py-10">
       {/* image and username */}
       <div className="flex flex-row my-10">
         <div className="pfp">
           <img src={imageUrl} alt="Profile Picture"/>
         </div>
         <div className="my-7 flex flex-row items-center">
-            <div className="text-3xl basis-64">@{username}</div>
+            <div className="basis-64">
+              <div className="text-3xl">@{username}</div>
+              <div className="flex space-x-6 mt-4">
+                <div className="foll-btn">{following} Following</div>
+                <div className="foll-btn">{followers} Followers</div>
+              </div>
+            </div>
             <div
                 className="font-bold text-2xl basis-128 ml-20 italic border-2 border-yellow-600 rounded-md px-4 py-1 text-gold"
             >
@@ -62,7 +68,7 @@ const Header = ({ username }) => {
       <div>
         <div className="text-3xl text-red-600">{name}</div>   
         <div className="text-xl text-gold">
-          {profession} | {yoe}+ Years of Experience | <b>{rating}/10</b>
+          {profession} | {yoe}+ Years of Experience
         </div>
         <div className="text-xl">
           Currently working at <span className="font-bold text-red-600">{workingAt}</span>
@@ -70,14 +76,6 @@ const Header = ({ username }) => {
         <div className="text-xl">
           Owner of <span className="font-bold text-red-600">{ownerOf}</span>
         </div>
-      </div>
-      <div>
-        <u>
-          <b>{followers}</b> Followers
-        </u>
-        <u>
-          <b>{following}</b> Following
-        </u>
       </div>
       {(profession === "Director" || profession === "Producer") && (
         <button
