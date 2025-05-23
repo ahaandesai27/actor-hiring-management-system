@@ -190,17 +190,13 @@
 
 /* Filmography Section */
 .filmography-container {
-  display: flex;
-  flex-direction: column;
   align-items: center;
 }
 
 .film-list {
-  display: flex;
-  flex-direction: row;
+  display: grid;
   gap: 10px;
-  width: 100%;
-  max-width: 600px;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 /* Film Box */
