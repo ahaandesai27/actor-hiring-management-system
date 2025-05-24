@@ -1,27 +1,49 @@
-import NewHeader from './components/NewHeader/NewHeader';
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
-import Login from './components/Login/Login';
-import ProfilePage from './components/ProfilePage';
-import ViewRoleApplicants from './components/RolePage/ViewRoleApplicants.jsx';
-import RolePage from './components/RolePage/RolePage.jsx';
-import ProfessionalRolesPage from './components/RolePage/ProfessionalRolesPage.jsx';
 import useUser from './components/User/user.js';
+
 import LandingPage from './components/Landing/index.jsx';
+import Navbar from './components/Navbar.jsx';
+
+// auth
+import Login from './components/Auth/Login/Login.jsx';
+import SignIn from './components/Auth/SignIn/SignIn.jsx';
+
+//profile page 
+import ProfilePage from './components/Profile/ProfilePage';
+import EditProfile from './components/Profile/EditProfile/EditProfile.jsx';
+
+//roles 
+import ViewRoleApplicants from './components/Roles/RolePage/ViewRoleApplicants.jsx';
+import RolePage from './components/Roles/RolePage/RolePage.jsx';
+import ProfessionalRolesPage from './components/Roles/RolePage/ProfessionalRolesPage.jsx';
+import AddRole from './components/Roles/AddRole/AddRole.jsx';
+
 import { useEffect } from 'react';
 
 function App() {
   const {updateUser} = useUser();
 
-  useEffect(() => updateUser('iamsrk', 'actor'));
+  useEffect(() => updateUser('CNolan', 'director'));
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
+      {/* Profile page */}
+      <Route path="/profile/edit" element={<> <Navbar /> <EditProfile /> </>} />
       <Route path="/profile/:username/roles" element={<ProfessionalRolesPage />} />
-      <Route path="/profile/:username" element={<ProfilePage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path='/roles' element={<RolePage />} />
+      <Route path="/profile/:username" element={<> <Navbar /> <ProfilePage /> </>} />
+      <Route path="/profile" element={<> <Navbar /> <ProfilePage /> </>} />
+
+      {/*Role page*/}
+      <Route path='/roles/add' element={<> <Navbar /> <AddRole /> </> } />
+      <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
+      <Route path='/roles' element={<> <Navbar /> <RolePage /> </>} />
+
+      {/* Auth */}
+      <Route path='/login' element={<Login />} />
+      <Route path='/signin' element={<SignIn />} />
+
+      {/* Location Booking */}
+      <Route path="/" element={<LandingPage />} />
     </Routes>
   );
 }

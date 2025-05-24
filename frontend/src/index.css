@@ -11,14 +11,3 @@ body {
 .bg-gray {
     background-color: rgb(18, 16, 16);
 }
-
-.foll-btn {
-  padding: 0.5rem 1rem;
-  background-color: rgb(120, 8, 8); /* blue-600 */
-  color: white;
-  border: none;
-  border-radius: 0.5rem; /* rounded */
-  font-size: 0.75rem;
-  cursor: pointer;
-  width: 6rem;
-}
