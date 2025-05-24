@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './AddRolestyles.css';
+import './styles.css';
 
 function AddRole() {
     const [role, setRole] = useState({
@@ -25,7 +25,7 @@ function AddRole() {
 
     return (
         <div className="addrole-wrapper">
-            <h2 className="addrole-header">Add Roles Here</h2>
+            <h2 className="addrole-header">Create a new role</h2>
             <div className="addrole-card">
                 <form onSubmit={getRole} className="addrole-form">
                     <input

@@ -1,22 +1,35 @@
-:root {
-  --gold: #D4AF37;
-  --black: #1b1818;
-  --dark-red: rgb(87, 6, 6);
-}
-.pfp img {
-    height: 120px;
-    width: 120px;
-    border-radius: 100px;
+
+/* Filmography Section */
+.filmography-container {
+  align-items: center;
 }
 
-h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-top: 20px;
-  text-align: center;
-  color: red;
-  letter-spacing: -0.5px;
+.film-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
 }
+
+/* Film Box */
+.film-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.film-number {
+  font-weight: bold;
+}
+
+.film-name {
+  flex-grow: 1;
+  text-align: center;
+}
+
 
 .film-list {
   display: grid;

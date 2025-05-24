@@ -15,16 +15,16 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex space-x-8">
-          <a href="#features" className="text-white hover:text-yellow-300">
+          <a href="/" className="text-white hover:text-yellow-300">
             Home
           </a>
-          <a href="#how-it-works" className="text-white hover:text-yellow-300">
+          <a href="/profile" className="text-white hover:text-yellow-300">
             Profile
           </a>
-          <a href="#testimonials" className="text-white hover:text-yellow-300">
+          <a href="/roles" className="text-white hover:text-yellow-300">
             Roles
           </a>
-          <a href="#testimonials" className="text-white hover:text-yellow-300">
+          <a href="/locations " className="text-white hover:text-yellow-300">
             Locations
           </a>
         </div>

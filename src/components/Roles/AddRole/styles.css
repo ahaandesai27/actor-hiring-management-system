@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     padding: 2rem;
+    color: white;
     font-family: sans-serif;
   }
   
@@ -19,7 +20,7 @@
     padding: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 1rem;
-    background-color: #fff;
+    background-color: var(--black);
   }
   
   .addrole-form {
@@ -30,7 +31,7 @@
   
     .addrole-form input {
       padding: 0.75rem;
-      border: 1px solid #ccc;
+      border: 1px solid var(--gold);
       border-radius: 6px;
       font-size: 1rem;
   }
@@ -38,7 +39,7 @@
   .submit-role-button {
       padding: 0.75rem;
       font-size: 1rem;
-      background-color: #007bff;
+      background-color: red;
       color: white;
       border: none;
       border-radius: 6px;
@@ -47,6 +48,6 @@
   }
 
   .submit-role-button:hover {
-      background-color: #0056b3;
+      background-color: var(--dark-red);
   }
     

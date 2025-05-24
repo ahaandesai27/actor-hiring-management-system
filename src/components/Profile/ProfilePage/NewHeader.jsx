@@ -45,7 +45,7 @@ const Header = ({ username }) => {
   return (
     <div className="bg-gray text-white px-10 py-10">
       {/* image and username */}
-      <div className="flex flex-row my-10">
+      <div className="flex flex-row my-10 gap-6">
         <div className="pfp">
           <img src={imageUrl} alt="Profile Picture"/>
         </div>

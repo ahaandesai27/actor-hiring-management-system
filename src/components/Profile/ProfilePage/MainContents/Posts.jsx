@@ -2,6 +2,9 @@
 import React, { useState
               ,  useEffect 
               } from "react";
+
+import './postStyles.css';
+
 const Posts = () => {
   return (
     <div className="bg-grey posts-container h-max">

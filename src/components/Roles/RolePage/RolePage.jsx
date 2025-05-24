@@ -1,7 +1,7 @@
 import React, { useActionState, useEffect, useState } from "react";
 import axios from "axios";
 import "./RolePagestyles.css";
-import Navbar from '../Navbar';
+import Navbar from '../../Navbar';
 
 function RolePage() {
   // initially empty
@@ -56,7 +56,6 @@ function RolePage() {
 
   return (
     <div>
-      <Navbar />
       <div className="roles-wrapper">
         <h2 className="roles-header">Available Roles</h2>
         <button className="sort-button" onClick={sortRolesByDate}>

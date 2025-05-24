@@ -2,6 +2,7 @@ import React, { useState
               ,  useEffect 
               } from "react";
 import axios from "axios";
+import './filmStyles.css';
 
 const Filmography = ({ username }) => {
   const [films, setFilms] = useState([]);
