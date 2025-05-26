@@ -77,21 +77,23 @@ const ProfessionalController = {
         try {
             const username = req.body.username;
             const role_id = parseInt(req.body.role_id);
+            console.log(username, role_id);
             const professional = await Professional.findByPk(username);
             const role = await roles.findByPk(role_id);
             if (!professional || !role) {
                 return res.status(404)
-                   .json({error: "Professional or role not found"});
+                   .json({message: "Professional or role not found"});
             }
             else if (professional.profession !== role.role_for) {
                 return res.status(403)
-                   .json({forbidden: "Cannot apply for this role!"});
+                   .json({message: "Cannot apply for this role!"});
                  }
             await Applications.create({professional: username, role_id});
             return res.status(201)
-               .json({success: "Applied successfully!"}); 
+               .json({message: "Applied successfully!"}); 
         }  catch (error) {
-            return res.status(500).json({ error: error.message });
+            console.log(error);
+            return res.status(500).json({ message: error.message });
            }   
     },
 
