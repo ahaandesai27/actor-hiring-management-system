@@ -18,6 +18,7 @@ import ViewRoleApplicants from './components/Roles/RolePage/ViewRoleApplicants.j
 import RolePage from './components/Roles/RolePage/RolePage.jsx';
 import ProfessionalRolesPage from './components/Roles/RolePage/ProfessionalRolesPage.jsx';
 import AddRole from './components/Roles/AddRole/AddRole.jsx';
+import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 
 import { useEffect } from 'react';
 
@@ -34,6 +35,7 @@ function App() {
       <Route path="/profile" element={<> <Navbar /> <ProfilePage /> </>} />
 
       {/*Role page*/}
+      <Route path="/roles/apply/:roleId" element = {<><Navbar /> <ApplyRolePage /> </>} />
       <Route path='/roles/add' element={<> <Navbar /> <AddRole /> </> } />
       <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
       <Route path='/roles' element={<> <Navbar /> <RolePage /> </>} />

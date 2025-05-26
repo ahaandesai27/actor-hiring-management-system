@@ -14,6 +14,16 @@
     text-align: center;
   }
   
+  .film-select {
+    appearance: none;
+    -webkit-appearance: none; /* for Safari */
+   -moz-appearance: none;    /* for Firefox */
+    background-color: var(--black);
+    color: white;
+    border-color: #D4AF37;
+    border-radius: 10px;
+    padding: 0.75rem;
+  }
   .addrole-card {
     width: 100%;
     max-width: 500px;

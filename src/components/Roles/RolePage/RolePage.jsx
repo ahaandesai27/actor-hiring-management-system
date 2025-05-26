@@ -1,13 +1,20 @@
 import React, { useActionState, useEffect, useState } from "react";
 import axios from "axios";
 import "./RolePagestyles.css";
-import Navbar from '../../Navbar';
+import Navbar from "../../Navbar";
+import { useNavigate } from "react-router-dom";
 
 function RolePage() {
   // initially empty
   const [roles, setRoles] = useState([]);
   // initially false
   const [sortedByDate, setSortByDate] = useState(false);
+  const [creator, setCreator] = useState("");
+  const [roleFor, setRoleFor] = useState("");
+  const [payLL, setPayLL] = useState(null);
+  const [payHL, setPayHL] = useState(null);
+  const navigate = useNavigate();
+  
 
   // this is a useEffect, this thing will run only once
   // per page reload
@@ -16,7 +23,7 @@ function RolePage() {
   // ie. when first opened or reloaded
   useEffect(() => {
     // put the actual db path here
-    fetch("http://localhost:5000/roles")
+    fetch("http://localhost:5000/roles/search")
       .then((res) => res.json())
       .then((data) => setRoles(data));
   }, []);
@@ -33,35 +40,71 @@ function RolePage() {
     setSortByDate(true);
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const response = await axios.get(`http://localhost:5000/roles/search?creator=${creator}&role_for=${roleFor}&pay_ll=${payLL}&pay_hl=${payHL}`);
+    setRoles(response.data);
+        }
+  
+  const clear = async (event) => {
+                        event.preventDefault()
+                        const response = await axios.get(`http://localhost:5000/roles/search`);
+                        setRoles(response.data);
+                      }
   const trimText = (text, maxLength = 75) => {
     if (!text) return "";
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-    };
+  };
 
-
-  const applyForRole = async (role_id, role_for) => {
-    const username = "iamsrk"; // to be replaced with context
-    const profession = "actor";
-
-    if (profession != role_for) {
-      alert("Cannot apply for role!");
-      return;
-    }
-    await axios.post("http://localhost:5000/professional/apply", {
-      username,
-      role_id,
-    });
-    alert("Applied successfully!");
+  const applyForRole = async (role_id) => {
+    navigate(`../roles/apply/${role_id}`);
+    
   };
 
   return (
     <div>
-      <div className="roles-wrapper">
-        <h2 className="roles-header">Available Roles</h2>
-        <button className="sort-button" onClick={sortRolesByDate}>
-          Sort By Date
-        </button>
-      </div>
+      <h2 className="roles-header py-6">Available Roles</h2>
+      <form onSubmit={handleSubmit} className="px-6">
+        <div className="text-red-600 text-2xl font-bold mb-5">Filters</div>
+        <div className="flex gap-5">
+          <input
+            type="text"
+            placeholder="Creator"
+            value={creator}
+            onChange={(e) => setCreator(e.target.value)}
+            className="p-2 bg-gold rounded-lg"
+          />
+          
+          <select value={roleFor} onChange={(e) => setRoleFor(e.target.value)} className="p-3 bg-gold rounded-lg">
+            <option value="">Select Role</option>
+            <option value="actor">Actor</option>
+            <option value="director">Director</option>
+            <option value="producer">Producer</option>
+          </select>
+
+          <input
+            type="number"
+            placeholder="Pay Lower Limit"
+            value={payLL}
+            onChange={(e) => setPayLL(e.target.value)}
+            className="p-2 bg-gold rounded-lg"
+          />
+
+          <input
+            type="number"
+            placeholder="Pay Upper Limit"
+            value={payHL}
+            onChange={(e) => setPayHL(e.target.value)}
+            className="p-2 bg-gold rounded-lg"
+          />
+
+        </div>
+        <br />
+
+        <button type="submit" className="bg-red-600 p-2 rounded-lg mt-5 w-32 mr-3">Search</button>
+        <button className="bg-green-600 p-2 rounded-lg mt-5 w-32 mr-3" onClick={sortRolesByDate}> Sort By Date </button>
+        <button className="bg-blue-400 p-2 rounded-lg mt-5 w-32" onClick={clear}> Clear </button>
+      </form>
       {/* the map is used to go thru each element obtained from
                     the DB
                     it is all wrapped inside a Card element
@@ -88,7 +131,7 @@ function RolePage() {
                 </div>
               </div>
 
-              <button onClick={() => applyForRole(role.role_id, role.role_for)}>
+              <button onClick={() => applyForRole(role.role_id)}>
                 <div align="center">Apply for role</div>
               </button>
             </div>
