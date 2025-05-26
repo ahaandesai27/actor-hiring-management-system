@@ -28,7 +28,7 @@ const roles = db.define('Roles',{
         allowNull: false
     },
     pay: {
-        type: DataTypes.DATE,
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     creator: {
