@@ -1,7 +1,7 @@
 import React, { useActionState, useEffect, useState } from "react";
 import axios from 'axios';
 import { useParams } from "react-router-dom";
-import useUser from "../../User/user";
+import {useUser} from "../../User/user";
 import './RolePageStyles.css';
 
 function RolePage() {

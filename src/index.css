@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
 .text-gold {
-    color: #D4AF37;
+  color: #f8c009;
 }
 
 .bg-gold {
   background-color: #f8c009;
+}
+
+.border-gold {
+  border-color: #f8c009;
 }
 
 body {

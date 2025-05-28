@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import apiurl from "../../../apiurl";
 import "./styles.css";
 
 const Header = ({ username }) => {
@@ -21,7 +22,7 @@ const Header = ({ username }) => {
     async function fetchProfessional() {
       try {
         const response = await axios.get(
-          `http://localhost:5000/professional/${username}`
+          `${apiurl}/professional/${username}`
         );
         const professionalData = response.data;
         setName(professionalData.full_name);

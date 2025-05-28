@@ -1,6 +1,6 @@
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
-import useUser from './components/User/user.js';
+import {useUser} from './components/User/user.jsx';
 
 import LandingPage from './components/Landing/index.jsx';
 import Navbar from './components/Navbar.jsx';
@@ -19,6 +19,9 @@ import RolePage from './components/Roles/RolePage/RolePage.jsx';
 import ProfessionalRolesPage from './components/Roles/RolePage/ProfessionalRolesPage.jsx';
 import AddRole from './components/Roles/AddRole/AddRole.jsx';
 import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
+
+//posts
+import Posts from './components/Posts/index.jsx';
 
 import { useEffect } from 'react';
 
@@ -39,6 +42,9 @@ function App() {
       <Route path='/roles/add' element={<> <Navbar /> <AddRole /> </> } />
       <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
       <Route path='/roles' element={<> <Navbar /> <RolePage /> </>} />
+
+      {/*Posts page*/}
+      <Route path="/posts" element={<> <Navbar /> <Posts /> </>} />
 
       {/* Auth */}
       <Route path='/login' element={<Login />} />

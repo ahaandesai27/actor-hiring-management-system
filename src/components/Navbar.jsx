@@ -27,6 +27,9 @@ const Navbar = () => {
           <a href="/locations " className="text-white hover:text-yellow-300">
             Locations
           </a>
+          <a href='/posts' className="text-white hover:text-yellow-300">
+            Posts
+          </a>
         </div>
 
         <button className="bg-yellow-300 hover:bg-yellow-400 text-black px-4 py-2 rounded text-sm font-medium">

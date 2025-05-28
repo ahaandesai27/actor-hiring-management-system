@@ -1,19 +1,16 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
-import apiurl from '../../../../apiurl';
+import apiurl from '../../apiurl';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
-import './postStyles.css'
-import { useUser } from '../../../User/user';
+import './style.css'
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState(new Set());
-    const { userName } = useUser();
-    const postRef = useRef();
 
     useEffect(() => {
         async function fetchPosts() {
-            const response = await axios.get(`${apiurl}/post/creator/${userName}`);
+            const response = await axios.get(`${apiurl}/post`);
             const postsResponse = response.data;
             postsResponse.sort((a, b) => new Date(b.time) - new Date(a.time));
             setPosts(response.data);
@@ -41,36 +38,19 @@ const Posts = () => {
       return `${diffInYears}y ago`;
     };
 
-    const handlePost = async () => {
-      // api request 
-      await axios.post(`${apiurl}/post`, 
-        {
-          "contents": postRef.current.value,
-          "creator": userName
-        }
-      )
-
-      alert("Posted successfully!");
-      window.location.reload();
-
-    }
-
     const handleLike = () => {
       // post request
     }
 
     const formatNumber = () => {
-      // number of likes
+      // idk
     }
 
     return (
     <div className="max-w-6xl mx-auto">
-      <div>
-        <div className='text-3xl text-center font-bold mt-2'>Create Post</div>
-        <textarea ref={postRef} className='bg-mydark p-5 w-full rounded-md mt-4 border border-gold focus:outline-none focus:ring-0 focus:border-transparent' placeholder="What's Happening?"></textarea>
-        <div className='flex justify-center items-center'>
-          <button className='p-2 rounded-md bg-green-500 text-black font-bold w-32 mt-3 hover:bg-green-700' onClick={handlePost}>Submit</button>
-        </div>
+      {/* Header */}
+      <div className="bg-gray border-b border-gold p-4 top-0 z-10">
+        <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
       </div>
 
       {/* Posts Feed */}

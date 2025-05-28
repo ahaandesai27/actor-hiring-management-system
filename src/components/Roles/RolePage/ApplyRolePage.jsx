@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import useUser from '../../User/user';
+import {useUser} from '../../User/user';
 
 function formatDate(dateStr) {
   if (!dateStr) return 'N/A';
