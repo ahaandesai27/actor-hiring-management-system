@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
+import { createContext
+       ,  useContext
+       , useState, useEffect 
+       } from 'react';
 
-//setup as context api later
 
-const useUser = () => {
+const UserContext = createContext();
+
+export const UserProvider = ({children}) => {
   const [userName, setUserName] = useState(localStorage.getItem('user_id') || '');
   const [userRole, setUserRole] = useState(localStorage.getItem('user_role') || '');
 
@@ -19,11 +23,13 @@ const useUser = () => {
     setUserRole(role);
   };
 
-  return {
-    userName,
-    userRole,
-    updateUser,
-  };
+  return (
+     <UserContext.Provider value={{userName, userRole, updateUser}} >
+        {children}
+      </UserContext.Provider>
+  );
 };
 
-export default useUser;
+export const useUser = () => {
+  return useContext(UserContext);
+};

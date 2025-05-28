@@ -3,7 +3,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        gold: '#D4AF37',  // your gold hex color
+        gold: '#f8c009;',  // your gold hex color
+        mydark:'#1a1a1a'
       },
     },
   },

@@ -8,16 +8,16 @@ import Likes from "./Likes";
 import '../styles.css'
 
 const MainContents = ({username}) => {
-  const [activeTab, setActiveTab] = useState("filmography");
+  const [activeTab, setActiveTab] = useState("posts");
 
   return (
     <div className="bg-gray text-white">
       <nav className="nav-bar">
-        <button className={activeTab === "filmography" ? "active" : ""} onClick={() => setActiveTab("filmography")}>
-          Filmography
-        </button>
         <button className={activeTab === "posts" ? "active" : ""} onClick={() => setActiveTab("posts")}>
           Posts
+        </button>
+        <button className={activeTab === "filmography" ? "active" : ""} onClick={() => setActiveTab("filmography")}>
+          Filmography
         </button>
         <button className={activeTab === "likes" ? "active" : ""} onClick={() => setActiveTab("likes")}>
           Likes
