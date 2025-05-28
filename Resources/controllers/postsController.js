@@ -3,10 +3,9 @@ const Comment = require('../models/Comments');
 
 const PostController = {
     create: async (req, res) => {
-        const { post_id, contents, creator} = req.body;
+        const { contents, creator} = req.body;
         try {
             const newPost = await Post.create({
-                post_id,
                 contents,
                 creator
             });
@@ -38,7 +37,7 @@ const PostController = {
     getByCreator: async(req, res) => {
         try {
             const {creator} = req.params;
-            const posts = await Post.find({
+            const posts = await Post.findAll({
                 where: {creator}
             });
             res.status(200)

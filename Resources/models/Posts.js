@@ -5,7 +5,8 @@ const Post = db.define('Post', {
     post_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        autoIncrement: true
     },
     contents: {
         type: DataTypes.STRING(100),
@@ -18,6 +19,11 @@ const Post = db.define('Post', {
     creator: {
         type: DataTypes.STRING(15),
         allowNull: true
+    },
+    time: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Date.now()
     }
 }, {
     tableName: 'posts',
