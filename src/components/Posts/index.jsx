@@ -1,12 +1,14 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import apiurl from '../../apiurl';
+import { useUser } from '../User/user';
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
 import './style.css'
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState(new Set());
+    const {userName} = useUser();
 
     useEffect(() => {
         async function fetchPosts() {
@@ -38,12 +40,20 @@ const Posts = () => {
       return `${diffInYears}y ago`;
     };
 
-    const handleLike = () => {
-      // post request
+    const checkLiked = async (post_id) => {
+      const response = await axios.get(`${apiurl}/post/liked/${userName}/${post_id}`);
+      return response.data.liked;
     }
 
-    const formatNumber = () => {
-      // idk
+    const handleLike = async (post_id) => {
+      // post request
+      console.log(post_id, userName);
+      await axios.post(`${apiurl}/post/like`, {
+        professional: userName,
+        post_id
+      })
+
+      alert("Liked successfully!");
     }
 
     return (
@@ -62,12 +72,12 @@ const Posts = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
+                    <div className="text-white font-semibold text-sm">
                       {post.creator.charAt(0).toUpperCase()}
-                    </span>
+                    </div>
                   </div>
                   <div>
-                    <p className="font-semibold text-gold">@{post.creator}</p>
+                    <button className="font-semibold text-gold" onClick={() => {window.location.href=`/profile/${post.creator}`}}>@{post.creator}</button>
                     <p className="text-sm text-gray-500">{formatTimeAgo(post.time)}</p>
                   </div>
                 </div>
@@ -94,12 +104,12 @@ const Posts = () => {
                   }`}
                 >
                   <Heart 
-                    className={`w-5 h-5 ${likedPosts.has(post.post_id) ? 'fill-current' : ''}`} 
+                    className={`w-5 h-5 ${checkLiked(post.post_id) ? 'fill-current' : ''}`} 
                   />
-                  <span className="font-medium">{formatNumber(post.likes)}</span>
+                  <span className="font-medium">{post.likes}</span>
                 </button>
                 
-                <button className="flex items-center space-x-2 px-3 py-2 rounded-full reply-button">
+                <button className="flex items-center space-x-2 px-3 py-2 rounded-full reply-button" onClick={() => {window.location.href=`/posts/${post.post_id}`}}>
                   <MessageCircle className="w-5 h-5" />
                   <span className="font-medium">Reply</span>
                 </button>

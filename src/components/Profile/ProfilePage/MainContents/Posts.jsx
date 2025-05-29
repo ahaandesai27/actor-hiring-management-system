@@ -5,7 +5,7 @@ import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react';
 import './postStyles.css'
 import { useUser } from '../../../User/user';
 
-const Posts = () => {
+const Posts = ({username}) => {
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState(new Set());
     const { userName } = useUser();
@@ -13,7 +13,7 @@ const Posts = () => {
 
     useEffect(() => {
         async function fetchPosts() {
-            const response = await axios.get(`${apiurl}/post/creator/${userName}`);
+            const response = await axios.get(`${apiurl}/post/creator/${username}`);
             const postsResponse = response.data;
             postsResponse.sort((a, b) => new Date(b.time) - new Date(a.time));
             setPosts(response.data);
@@ -65,6 +65,7 @@ const Posts = () => {
 
     return (
     <div className="max-w-6xl mx-auto">
+      {(username == userName && 
       <div>
         <div className='text-3xl text-center font-bold mt-2'>Create Post</div>
         <textarea ref={postRef} className='bg-mydark p-5 w-full rounded-md mt-4 border border-gold focus:outline-none focus:ring-0 focus:border-transparent' placeholder="What's Happening?"></textarea>
@@ -72,6 +73,7 @@ const Posts = () => {
           <button className='p-2 rounded-md bg-green-500 text-black font-bold w-32 mt-3 hover:bg-green-700' onClick={handlePost}>Submit</button>
         </div>
       </div>
+      )}
 
       {/* Posts Feed */}
       <div className="space-y-0">
