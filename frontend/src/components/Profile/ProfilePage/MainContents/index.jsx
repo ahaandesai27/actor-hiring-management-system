@@ -27,8 +27,8 @@ const MainContents = ({username}) => {
       {/* Content Section */}
       <div className="bg-gray">
         {activeTab === "filmography" && <Filmography username = {username}/>}
-        {activeTab === "posts" && <Posts />}
-        {activeTab === "likes" && <Likes />}
+        {activeTab === "posts" && <Posts username = {username}/>}
+        {activeTab === "likes" && <Likes username = {username}/>}
       </div>
     </div>
   );

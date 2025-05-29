@@ -22,6 +22,7 @@ import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 
 //posts
 import Posts from './components/Posts/index.jsx';
+import Comments from './components/Posts/Comments.jsx';
 
 import { useEffect } from 'react';
 
@@ -44,6 +45,7 @@ function App() {
       <Route path='/roles' element={<> <Navbar /> <RolePage /> </>} />
 
       {/*Posts page*/}
+      <Route path="/posts/:postId" element={<> <Navbar /> <Comments /> </>} />
       <Route path="/posts" element={<> <Navbar /> <Posts /> </>} />
 
       {/* Auth */}

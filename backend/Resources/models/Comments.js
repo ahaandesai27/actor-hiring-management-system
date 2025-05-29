@@ -6,7 +6,8 @@ const Comment = db.define('Comment', {
     comment_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        autoIncrement: true
     },
     contents: {
         type: DataTypes.STRING(100),
