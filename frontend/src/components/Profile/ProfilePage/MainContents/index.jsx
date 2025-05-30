@@ -4,6 +4,7 @@ import React, { useState
 import axios from 'axios';
 import Filmography from "./Filmography";
 import Posts from "../../../Posts/index";
+import Roles from '../../../Roles/RolePage/RolePage';
 import '../styles.css'
 
 const MainContents = ({username}) => {
@@ -21,6 +22,9 @@ const MainContents = ({username}) => {
         <button className={activeTab === "likes" ? "active" : ""} onClick={() => setActiveTab("likes")}>
           Likes
         </button>
+        <button className={activeTab === "roles" ? "active" : ""} onClick={() => setActiveTab("roles")}>
+          Roles
+        </button>
       </nav>
 
       {/* Content Section */}
@@ -28,6 +32,7 @@ const MainContents = ({username}) => {
         {activeTab === "filmography" && <Filmography username = {username}/>}
         {activeTab === "posts" && <Posts username = {username}/>}
         {activeTab === "likes" && <Posts username = {username} liked={true}/>}
+        {activeTab === "roles" && <Roles username={username} />}
       </div>
     </div>
   );
