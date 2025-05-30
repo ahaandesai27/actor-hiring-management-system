@@ -10,6 +10,7 @@ const PostComments = () => {
   const [post, setPost] = useState();
   const [comments, setComments] = useState([]);
   const [likedPosts, setLikedPosts] = useState(new Set());
+  const [postLikeCounts, setPostLikeCounts] = useState({});
   const { postId } = useParams();
   const { userName } = useUser();
   const newComment = useRef();
@@ -20,7 +21,14 @@ const PostComments = () => {
       let response = await axios.get(`${apiurl}/post/${postId}`);
       console.log(response.data);
       setPost(response.data);
-
+      
+      // Initialize hash map for like count
+      setPostLikeCounts({ [response.data.post_id]: response.data.likes });
+      
+      // Check if post is already liked
+      let likedResponse = await axios.get(`${apiurl}/post/liked/${userName}`);
+      setLikedPosts(new Set(likedResponse.data.postIds));
+      
       response = await axios.get(`${apiurl}/post/${postId}/comments`);
       setComments(response.data);
     }
@@ -55,14 +63,52 @@ const PostComments = () => {
         creator: userName
       }
     )
-
     alert("Commented successfully!");
     window.location.reload();
-
   }
 
-  const handleLike = () => {
-    // post? request
+  const handleLike = async (post_id) => {
+    const isLiked = likedPosts.has(post_id);
+
+    // Update UI immediately using hash maps for O(1) lookups and updates
+    const newLikedPosts = new Set(likedPosts);
+    const newPostLikeCounts = { ...postLikeCounts };
+    
+    if (isLiked) {
+      newLikedPosts.delete(post_id);
+      newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) - 1;
+    } else {
+      newLikedPosts.add(post_id);
+      newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) + 1;
+    }
+    
+    setLikedPosts(newLikedPosts);
+    setPostLikeCounts(newPostLikeCounts);
+
+    try {
+      if (isLiked) {
+        await axios.delete(`${apiurl}/post/like`, {
+          data: { professional: userName, post_id },
+        });
+        alert("Unliked successfully!");
+      } else {
+        await axios.post(`${apiurl}/post/like`, {
+          professional: userName,
+          post_id,
+        });
+        alert("Liked successfully!");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Action failed.");
+      
+      // Revert changes on error using hash maps
+      const revertedLikedPosts = new Set(likedPosts);
+      const revertedPostLikeCounts = { ...postLikeCounts };
+      
+      setLikedPosts(revertedLikedPosts);
+      setPostLikeCounts(revertedPostLikeCounts);
+    }
   };
 
   const formatNumber = () => {
@@ -121,7 +167,7 @@ const PostComments = () => {
                   likedPosts.has(post?.post_id) ? "fill-current" : ""
                 }`}
               />
-              <span className="font-medium">{post?.likes}</span>
+              <span className="font-medium">{postLikeCounts[post?.post_id] || post?.likes}</span>
             </button>
 
             <button className="flex items-center space-x-2 px-3 py-2 rounded-full reply-button">
@@ -170,7 +216,6 @@ const PostComments = () => {
                 </p>
               </div>
             </div>
-
             {/* Comment Content */}
             <p className="text-white text-base">{comment.contents}</p>
           </div>
