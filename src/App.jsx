@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import {useUser} from './components/User/user.jsx';
 
 import LandingPage from './components/Landing/index.jsx';
+import HomePage from './components/Home/index.jsx';
 import Navbar from './components/Navbar.jsx';
 
 // auth
@@ -53,7 +54,7 @@ function App() {
       <Route path='/signin' element={<SignIn />} />
 
       {/* Location Booking */}
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<> <Navbar /> <HomePage /> </>} />
     </Routes>
   );
 }

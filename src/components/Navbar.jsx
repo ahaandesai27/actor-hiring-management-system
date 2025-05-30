@@ -14,7 +14,7 @@ const Navbar = () => {
           <span className="text-xl text-white font-bold">ProdCast</span>
         </div>
 
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden md:flex space-x-10">
           <a href="/" className="text-white hover:text-yellow-300">
             Home
           </a>
