@@ -30,3 +30,12 @@ roles.belongsTo(Professional, {
 });
 roles.belongsTo(Film, { foreignKey: 'film_id' });
 // organizations books locations
+
+// for posts
+const Posts = require('./Posts.js');
+const ProfessionalLikes = require('./ProfessionalLikes.js');
+
+Professional.belongsToMany(Posts, { through: ProfessionalLikes, foreignKey: 'professional', otherKey: 'post_id' });
+Posts.belongsToMany(Professional, { through: ProfessionalLikes, foreignKey: 'post_id', otherKey: 'professional' });
+ProfessionalLikes.belongsTo(Posts, { foreignKey: 'post_id', as: 'Post' });
+ProfessionalLikes.belongsTo(require('./Professional.js'), { foreignKey: 'professional', as: 'Professional' });

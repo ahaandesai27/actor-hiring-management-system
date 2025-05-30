@@ -3,8 +3,7 @@ import React, { useState
               } from "react";
 import axios from 'axios';
 import Filmography from "./Filmography";
-import Posts from "./Posts";
-import Likes from "./Likes";
+import Posts from "../../../Posts/index";
 import '../styles.css'
 
 const MainContents = ({username}) => {
@@ -28,7 +27,7 @@ const MainContents = ({username}) => {
       <div className="bg-gray">
         {activeTab === "filmography" && <Filmography username = {username}/>}
         {activeTab === "posts" && <Posts username = {username}/>}
-        {activeTab === "likes" && <Likes username = {username}/>}
+        {activeTab === "likes" && <Posts username = {username} liked={true}/>}
       </div>
     </div>
   );
