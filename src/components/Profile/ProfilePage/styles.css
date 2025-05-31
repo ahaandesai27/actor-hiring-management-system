@@ -52,6 +52,21 @@ h2 {
   width: 6rem;
 }
 
+.msg-btn {
+    padding: 0.5rem 1rem;
+  background-color: rgb(62, 151, 64); /* blue-600 */
+  color: white;
+  border: none;
+  border-radius: 0.5rem; /* rounded */
+  font-size: 1rem;
+  cursor: pointer;
+  width: 6rem;
+}
+
+.msg-btn:hover {
+  background-color: rgb(38, 92, 39);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;

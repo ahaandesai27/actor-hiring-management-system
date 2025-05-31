@@ -20,7 +20,7 @@ const Filmography = ({ username }) => {
 
   return (
     <div className="filmography-container">
-      <h2>Filmography</h2>
+      <div className="text-gold text-3xl py-8 text-center font-bold">Filmography</div>
       <div className="film-list">
       {films.map((film, index) => (
         <div key={index} className="film-box">
