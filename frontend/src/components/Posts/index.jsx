@@ -16,7 +16,7 @@ const Posts = ({username = "", liked = false}) => {
       let response;
       if (username != "") {
           if (liked) {
-            response = await axios.get(`${apiurl}/post/liked/${userName}`);
+            response = await axios.get(`${apiurl}/post/liked/${username}`);
           } else {
           response = await axios.get(`${apiurl}/post/creator/${username}`);
           }
