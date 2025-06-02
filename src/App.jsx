@@ -25,12 +25,15 @@ import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 import Posts from './components/Posts/index.jsx';
 import Comments from './components/Posts/Comments.jsx';
 
+//chats 
+import Chat from './components/Chat/Chat.jsx';
+
 import { useEffect } from 'react';
 
 function App() {
   const {updateUser} = useUser();
 
-  useEffect(() => updateUser('CNolan', 'director'));
+  // useEffect(() => updateUser('CNolan', 'director'));
   return (
     <Routes>
       {/* Profile page */}
@@ -53,7 +56,10 @@ function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/signin' element={<SignIn />} />
 
-      {/* Location Booking */}
+      {/* Chats */}
+      <Route path='/chat/:receiver' element={<Chat /> } />
+
+
       <Route path="/" element={<> <Navbar /> <HomePage /> </>} />
     </Routes>
   );
