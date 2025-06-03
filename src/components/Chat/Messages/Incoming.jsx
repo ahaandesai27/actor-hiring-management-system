@@ -8,8 +8,8 @@ const Incoming = ({ message }) => {
           className="w-8 h-8 rounded-full"
         />
       </div>
-      <div className="flex max-w-96 bg-gold text-black rounded-lg p-3 gap-3">
-        <p className="text-gray-700">{message.message}</p>
+      <div className="flex max-w-96 bg-gold rounded-lg p-3 gap-3">
+        <p className="text-black">{message.message}</p>
       </div>
     </div>
   );
