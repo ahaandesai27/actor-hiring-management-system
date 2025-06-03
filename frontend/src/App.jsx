@@ -26,7 +26,7 @@ import Posts from './components/Posts/index.jsx';
 import Comments from './components/Posts/Comments.jsx';
 
 //chats 
-import Chat from './components/Chat/Chat.jsx';
+import ChatApp from './components/Chat/index.jsx';
 
 import { useEffect } from 'react';
 
@@ -57,7 +57,7 @@ function App() {
       <Route path='/signin' element={<SignIn />} />
 
       {/* Chats */}
-      <Route path='/chat/:receiver' element={<Chat /> } />
+      <Route path='/chat' element={<> <Navbar /> <ChatApp /> </> } />
 
 
       <Route path="/" element={<> <Navbar /> <HomePage /> </>} />
