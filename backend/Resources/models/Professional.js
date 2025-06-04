@@ -25,6 +25,10 @@ const Professional = db.define(
         rating: {
             type: DataTypes.DECIMAL(4,2),
             defaultValue: 5.00
+        },
+        profile_picture: {
+            type: DataTypes.STRING(500),
+            allowNull: true
         }
     },
     {

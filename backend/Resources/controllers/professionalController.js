@@ -3,18 +3,20 @@ const Film = require('../models/Films');
 const roles = require('../models/Roles.js');
 const Applications = require('../models/Applications.js');
 const connectionsController = require('../controllers/connectionsController');
+
 require('../models/associations');
 
 const ProfessionalController = {
     create: async (req, res) => {
-        const {username, fullName, profession, years_of_experience, rating} = req.body;
+        const {username, fullName, profession, years_of_experience, rating, profile_picture} = req.body;
         try {
             const newProfessional = await Professional.create({
                 username,
                 full_name: fullName,
                 profession,
                 years_of_experience,
-                rating
+                rating,
+                profile_picture
             });
             res.status(201)
                .json(newProfessional);
