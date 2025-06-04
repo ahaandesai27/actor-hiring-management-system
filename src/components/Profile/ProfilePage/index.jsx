@@ -9,6 +9,10 @@ import { useUser } from "../../User/user";
 import Follows from "./Follows"; // import your Follows component
 import "./styles.css";
 
+import {AdvancedImage} from '@cloudinary/react';
+import { fill } from "@cloudinary/url-gen/actions/resize";
+import cld from "../../../Cloudinary";
+
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
@@ -41,26 +45,30 @@ const ProfilePage = () => {
   const username = useParams().username || useUser().userName;
   const accountUser = useUser().userName;
 
+  // Active tab for navbar
   const [activeTab, setActiveTab] = useState("posts");
+
+  // Profile data
   const [name, setName] = useState("Shah Rukh Khan");
   const [profession, setProfession] = useState("Actor");
   const [yoe, setYoe] = useState("25");
   const [rating, setRating] = useState(9.5);
   const [followers, setFollowers] = useState(10);
   const [following, setFollowing] = useState(15);
-  const [imageUrl, setImageUrl] = useState(
-    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-  );
   const [about, setAbout] = useState("About me.");
   const [isFollowing, setIsFollowing] = useState(false);
 
-  // NEW: Modal state
+  // Profile picture
+  const [imageUrl, setImageUrl] = useState("https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg");
+
+  // Modal state
   const [showModal, setShowModal] = useState(false);
   const [showFollowingList, setShowFollowingList] = useState(true);
 
   useEffect(() => {
     async function fetchProfessional() {
       try {
+        // fetch details from database 
         const response = await axios.get(`${apiurl}/professional/${username}`);
         const professionalData = response.data;
         setName(professionalData.full_name);
@@ -72,6 +80,9 @@ const ProfilePage = () => {
         setRating(professionalData.rating);
         setFollowers(professionalData.followerCount);
         setFollowing(professionalData.followingCount);
+        if (professionalData.profile_picture) {
+          setImageUrl(professionalData.profile_picture);
+        }
 
         if (accountUser != username) {
           let followResponse = await axios.get(
@@ -79,6 +90,9 @@ const ProfilePage = () => {
           );
           setIsFollowing(followResponse.data.isFollowing);
         }
+
+        // fetch profile picture
+        
       } catch (error) {
         alert(error);
         console.error(error);
@@ -132,7 +146,7 @@ const ProfilePage = () => {
       <div className="px-10 py-10">
         <div className="flex flex-row my-10 gap-6">
           <div className="pfp">
-            <img src={imageUrl} alt="Profile Picture" />
+            <img src={imageUrl} />
           </div>
           <div className="my-7 flex flex-row items-center">
             <div className="basis-64">
