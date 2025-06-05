@@ -29,7 +29,6 @@ import Comments from './components/Posts/Comments.jsx';
 //chats 
 import ChatApp from './components/Chat/index.jsx';
 
-import { useEffect } from 'react';
 
 function App() {
   const { userName } = useUser();
