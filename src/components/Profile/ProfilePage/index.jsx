@@ -9,9 +9,6 @@ import { useUser } from "../../User/user";
 import Follows from "./Follows"; // import your Follows component
 import "./styles.css";
 
-import {AdvancedImage} from '@cloudinary/react';
-import { fill } from "@cloudinary/url-gen/actions/resize";
-import cld from "../../../Cloudinary";
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

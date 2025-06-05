@@ -30,7 +30,7 @@ const LandingPage = () => {
         <button
           className="bg-yellow-300 hover:bg-yellow-400 text-black px-4 py-2 rounded text-sm font-medium"
           onClick={() => {
-            window.location.href = "/profile";
+            window.location.href = "/login";
           }}
         >
           Get Started

@@ -1,6 +1,7 @@
 import './App.css'
 import { Routes, Route } from 'react-router-dom';
 import {useUser} from './components/User/user.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import LandingPage from './components/Landing/index.jsx';
 import HomePage from './components/Home/index.jsx';
@@ -31,36 +32,96 @@ import ChatApp from './components/Chat/index.jsx';
 import { useEffect } from 'react';
 
 function App() {
-  const {updateUser} = useUser();
-
-  // useEffect(() => updateUser('CNolan', 'director'));
+  const { userName } = useUser();
+  
   return (
     <Routes>
       {/* Profile page */}
-      <Route path="/profile/edit" element={<> <Navbar /> <EditProfile /> </>} />
-      <Route path="/profile/:username/roles" element={<ProfessionalRolesPage />} />
-      <Route path="/profile/:username" element={<> <Navbar /> <ProfilePage /> </>} />
-      <Route path="/profile" element={<> <Navbar /> <ProfilePage /> </>} />
+      <Route path="/profile/edit" element={
+        <ProtectedRoute>
+          <><Navbar /> <EditProfile /></>
+        </ProtectedRoute>
+      } />
+      <Route path="/profile/:username/roles" element={
+        <ProtectedRoute>
+          <ProfessionalRolesPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile/:username" element={
+        <ProtectedRoute>
+          <><Navbar /> <ProfilePage /></>
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <><Navbar /> <ProfilePage /></>
+        </ProtectedRoute>
+      } />
 
       {/*Role page*/}
-      <Route path="/roles/apply/:roleId" element = {<><Navbar /> <ApplyRolePage /> </>} />
-      <Route path='/roles/add' element={<> <Navbar /> <AddRole /> </> } />
-      <Route path="/roles/:role_id/applicants" element={<ViewRoleApplicants />} />
-      <Route path='/roles' element={<> <Navbar /> <RolePage /> </>} />
+      <Route path="/roles/apply/:roleId" element={
+        <ProtectedRoute>
+          <><Navbar /> <ApplyRolePage /></>
+        </ProtectedRoute>
+      } />
+      <Route path='/roles/add' element={
+        <ProtectedRoute>
+          <><Navbar /> <AddRole /></>
+        </ProtectedRoute>
+      } />
+      <Route path="/roles/:role_id/applicants" element={
+        <ProtectedRoute>
+          <ViewRoleApplicants />
+        </ProtectedRoute>
+      } />
+      <Route path='/roles' element={
+        <ProtectedRoute>
+          <><Navbar /> <RolePage /></>
+        </ProtectedRoute>
+      } />
 
       {/*Posts page*/}
-      <Route path="/posts/:postId" element={<> <Navbar /> <Comments /> </>} />
-      <Route path="/posts" element={<> <Navbar /> <Posts /> </>} />
+      <Route path="/posts/:postId" element={
+        <ProtectedRoute>
+          <><Navbar /> <Comments /></>
+        </ProtectedRoute>
+      } />
+      <Route path="/posts" element={
+        <ProtectedRoute>
+          <><Navbar /> <Posts /></>
+        </ProtectedRoute>
+      } />
 
       {/* Auth */}
-      <Route path='/login' element={<Login />} />
-      <Route path='/signin' element={<SignIn />} />
+      <Route path='/login' element={
+          <Login />
+      } />
+      <Route path='/signin' element={
+          <SignIn />
+      } />
 
       {/* Chats */}
-      <Route path='/chat' element={<> <Navbar /> <ChatApp /> </> } />
+      <Route path='/chat' element={
+        <ProtectedRoute>
+          <><Navbar /> <ChatApp /></>
+        </ProtectedRoute>
+      } />
 
 
-      <Route path="/" element={<> <Navbar /> <HomePage /> </>} />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
+            <>
+              <Navbar />
+              <HomePage />
+            </>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Public Landing Page */}
+      <Route path="/" element={<LandingPage />} />
     </Routes>
   );
 }
