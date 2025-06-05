@@ -2,6 +2,7 @@ const { Sequelize, DataTypes, DATE } = require('sequelize');
 const { db } = require('../../db/connectDB.js');
 const Film = require('./Films.js');
 const WorkedOn = require('./WorkedOn.js');
+require('dotenv').config();
 
 
 const Professional = db.define(
@@ -29,6 +30,10 @@ const Professional = db.define(
         profile_picture: {
             type: DataTypes.STRING(500),
             allowNull: true
+        },
+        password: {
+            type: DataTypes.STRING(300),
+            allowNull: false
         }
     },
     {

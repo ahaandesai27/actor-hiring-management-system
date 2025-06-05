@@ -18,6 +18,7 @@ app.use('/location', require('./Resources/routes/LocationRoutes.js'))
 app.use('/booking', require('./Resources/routes/BookingRoutes.js'))
 app.use('/post', require('./Resources/routes/PostRoutes.js'));
 app.use('/comment', require('./Resources/routes/CommentRoutes.js'));
+app.use('/auth', require('./Resources/auth/route.js'));
 
 async function start() {
     try {
