@@ -118,12 +118,12 @@ const PostComments = () => {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="bg-gray border-b border-gold p-4 top-0 z-10">
+      <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
         <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
       </div>
 
       {/* Parent Post */}
-      <div key={post?.post_id} className="bg-gray border-b border-gold p-2">
+      <div key={post?.post_id} className="bg-mydark border-b border-gold p-2">
         {/* Post Header */}
         <div className="p-4 pb-3">
           <div className="flex items-center justify-between">
@@ -179,7 +179,7 @@ const PostComments = () => {
       </div>
 
       {/* Comment Input */}
-      <div className="p-6 border-t border-gold bg-gray">
+      <div className="p-6 border-t border-gold bg-mydark">
         <textarea
           ref={newComment}
           placeholder="Write a comment..."
@@ -201,7 +201,7 @@ const PostComments = () => {
         {comments.map((comment) => (
           <div
             key={comment.comment_id}
-            className="ml-6 bg-gray border-l-4 border-gold p-3 rounded-md"
+            className="ml-6 bg-mydark border-l-4 border-gold p-3 rounded-md"
           >
             {/* Comment Header */}
             <div className="flex items-center space-x-3 mb-2">

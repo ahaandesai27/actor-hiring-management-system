@@ -138,7 +138,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-gray text-white">
+    <div className="bg-mydark text-white">
       {/* Header Section */}
       <div className="px-10 py-10">
         <div className="flex flex-row my-10 gap-6">
@@ -229,7 +229,7 @@ const ProfilePage = () => {
       </nav>
 
       {/* Content Section */}
-      <div className="bg-gray">
+      <div className="bg-mydark">
         {activeTab === "filmography" && <Filmography username={username} />}
         {activeTab === "posts" && <Posts username={username} />}
         {activeTab === "likes" && <Posts username={username} liked={true} />}

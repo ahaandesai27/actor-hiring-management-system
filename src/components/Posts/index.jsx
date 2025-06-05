@@ -116,14 +116,14 @@ const Posts = ({username = "", liked = false}) => {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="bg-gray border-b border-gold p-4 top-0 z-10">
+      <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
         <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
       </div>
 
       {/* Posts Feed */}
       <div className="space-y-0">
         {posts.map((post) => (
-          <div key={post.post_id} className="bg-gray border-b border-gold p-2">
+          <div key={post.post_id} className="bg-mydark border-b border-gold p-2">
             {/* Post Header */}
             <div className="p-4 pb-3">
               <div className="flex items-center justify-between">
