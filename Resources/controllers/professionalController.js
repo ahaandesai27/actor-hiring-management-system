@@ -3,24 +3,35 @@ const Film = require('../models/Films');
 const roles = require('../models/Roles.js');
 const Applications = require('../models/Applications.js');
 const connectionsController = require('../controllers/connectionsController');
+const bcrypt = require('bcrypt');
 
 require('../models/associations');
 
+const hashPassword = async (plainTextPassword) => {
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(plainTextPassword, saltRounds);
+  return hashedPassword;
+};
+
 const ProfessionalController = {
     create: async (req, res) => {
-        const {username, fullName, profession, years_of_experience, rating, profile_picture} = req.body;
+        console.log("WE here!");
+        const {username, full_name, profession, years_of_experience, rating, profile_picture, password} = req.body;
+        const storedPassword = await hashPassword(password);
         try {
             const newProfessional = await Professional.create({
                 username,
-                full_name: fullName,
+                full_name,
                 profession,
                 years_of_experience,
                 rating,
-                profile_picture
+                profile_picture,
+                password: storedPassword
             });
             res.status(201)
                .json(newProfessional);
         } catch (error) {
+            console.log(error);
             return res.status(500).json({ error: error.message });
         }
     },
