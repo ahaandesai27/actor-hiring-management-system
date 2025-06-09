@@ -9,6 +9,7 @@ import sendMessage from "./sendMessage";
 
 const Chat = ({ receiver }) => {
   const sender = useUser().userName;
+  console.log("Just console logged:", sender, receiver)
 
   if (sender == receiver) {
     return (

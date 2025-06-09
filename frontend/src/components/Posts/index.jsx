@@ -1,27 +1,33 @@
-import { useState, useEffect } from "react";
+import {
+  useState, useEffect
+  , useRef
+} from "react";
 import axios from "axios";
 import apiurl from "../../apiurl";
 import { useUser } from "../User/user";
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import "./style.css";
 
-const Posts = ({username = "", liked = false}) => {
+import CreatePost from "./createPost";
+
+const Posts = ({ username = "", liked = false }) => {
   const [posts, setPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [postLikeCounts, setPostLikeCounts] = useState({});
   const { userName } = useUser();
+  const postRef = useRef(null);
 
   useEffect(() => {
     async function fetchPosts() {
       let response;
       if (username != "") {
-          if (liked) {
-            response = await axios.get(`${apiurl}/post/liked/${username}`);
-          } else {
+        if (liked) {
+          response = await axios.get(`${apiurl}/post/liked/${username}`);
+        } else {
           response = await axios.get(`${apiurl}/post/creator/${username}`);
-          }
+        }
       } else {
-          response = await axios.get(`${apiurl}/post`);
+        response = await axios.get(`${apiurl}/post`);
       }
 
       const postsResponse = response.data;
@@ -34,10 +40,10 @@ const Posts = ({username = "", liked = false}) => {
         likeCounts[post.post_id] = post.likes;
       });
       setPostLikeCounts(likeCounts);
-      
+
       if (!liked) {
         response = await axios.get(`${apiurl}/post/liked/${userName}`);
-      } 
+      }
       const postIds = response.data.map(post => post.post_id);
       setLikedPosts(new Set(postIds));
     }
@@ -69,13 +75,14 @@ const Posts = ({username = "", liked = false}) => {
     return res;
   };
 
+
   const handleLike = async (post_id) => {
     const isLiked = likedPosts.has(post_id);
 
     // Update UI immediately using hash maps for O(1) lookups and updates
     const newLikedPosts = new Set(likedPosts);
     const newPostLikeCounts = { ...postLikeCounts };
-    
+
     if (isLiked) {
       newLikedPosts.delete(post_id);
       newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) - 1;
@@ -83,7 +90,7 @@ const Posts = ({username = "", liked = false}) => {
       newLikedPosts.add(post_id);
       newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) + 1;
     }
-    
+
     setLikedPosts(newLikedPosts);
     setPostLikeCounts(newPostLikeCounts);
 
@@ -103,11 +110,11 @@ const Posts = ({username = "", liked = false}) => {
     } catch (err) {
       console.error(err);
       alert("Action failed.");
-      
+
       // Revert changes on error using hash maps
       const revertedLikedPosts = new Set(likedPosts);
       const revertedPostLikeCounts = { ...postLikeCounts };
-      
+
       setLikedPosts(revertedLikedPosts);
       setPostLikeCounts(revertedPostLikeCounts);
     }
@@ -115,11 +122,13 @@ const Posts = ({username = "", liked = false}) => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
+      
+      {(username !== userName) && <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
         <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
-      </div>
+      </div>}
 
+      {(username == userName && <CreatePost /> )}
+      
       {/* Posts Feed */}
       <div className="space-y-0">
         {posts.map((post) => (
@@ -163,16 +172,14 @@ const Posts = ({username = "", liked = false}) => {
               <div className="flex items-center space-x-6">
                 <button
                   onClick={() => handleLike(post.post_id)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200 ${
-                    likedPosts.has(post.post_id)
-                      ? "text-red-600 hover:bg-red-100"
-                      : "like-button"
-                  }`}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200 ${likedPosts.has(post.post_id)
+                    ? "text-red-600 hover:bg-red-100"
+                    : "like-button"
+                    }`}
                 >
                   <Heart
-                    className={`w-5 h-5 ${
-                      likedPosts.has(post.post_id) ? "fill-current" : ""
-                    }`}
+                    className={`w-5 h-5 ${likedPosts.has(post.post_id) ? "fill-current" : ""
+                      }`}
                   />
                   <span className="font-medium">{postLikeCounts[post.post_id] || post.likes}</span>
                 </button>
