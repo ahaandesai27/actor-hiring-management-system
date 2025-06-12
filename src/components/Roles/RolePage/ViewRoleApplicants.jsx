@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import BackNavbar from "../../Back";
 import axios from "axios";
+import apiurl from "../../../apiurl";
 
 function ViewRoleApplicants() {
   const { role_id } = useParams();
@@ -61,6 +62,36 @@ function ViewRoleApplicants() {
     setLoadingAnalysis(false);
   };
 
+  const handleOfferRole = async (applicantUsername) => {
+    // Confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to offer this role to ${applicantUsername}?`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      const response = await axios.patch(`${apiurl}/roles/${role_id}/offer`, {
+        offered_to: applicantUsername,
+      });
+      
+      if (response.status === 200) {
+        alert(`Role successfully offered to ${applicantUsername}!`);
+        // Optionally, you can refresh the applicants list or redirect
+        window.location.reload();
+      } else {
+        alert("Failed to offer role. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error offering role:", error);
+      if (error.response) {
+        alert(`Error: ${error.response.data.message || "Failed to offer role"}`);
+      } else {
+        alert("Network error. Please try again.");
+      }
+    }
+  };
+
   return (
     <div
       className="h-full"
@@ -92,8 +123,11 @@ function ViewRoleApplicants() {
                 <th className="px-6 py-3 border-b border-[var(--gold)] border-r border-[var(--gold)]">
                   Paragraph
                 </th>
-                <th className="px-6 py-3 border-b border-[var(--gold)]">
+                <th className="px-6 py-3 border-b border-[var(--gold)] border-r border-[var(--gold)]">
                   Audition Video
+                </th>
+                <th className="px-6 py-3 border-b border-[var(--gold)]">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -111,7 +145,7 @@ function ViewRoleApplicants() {
                       {applicant.Applications.paragraph}
                     </div>
                   </td>
-                  <td className="px-6 py-4 border-b border-[var(--gold)]">
+                  <td className="px-6 py-4 border-b border-[var(--gold)] border-r border-[var(--gold)]">
                     {applicant.Applications.audition_url ? (
                       <button
                         onClick={() => openVideoModal(applicant.Applications.audition_url)}
@@ -122,6 +156,14 @@ function ViewRoleApplicants() {
                     ) : (
                       <span className="text-gray-400">No video</span>
                     )}
+                  </td>
+                  <td className="px-6 py-4 border-b border-[var(--gold)]">
+                    <button
+                      onClick={() => handleOfferRole(applicant.username)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow-md"
+                    >
+                      Offer Role
+                    </button>
                   </td>
                 </tr>
               ))}
