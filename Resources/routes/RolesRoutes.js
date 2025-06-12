@@ -7,6 +7,7 @@ router.get('/search', RoleController.search);
 router.get('/:role_id', RoleController.getOne);
 router.put('/:role_id', RoleController.update);
 router.delete('/:role_id', RoleController.delete);
+router.patch('/:role_id/offer', RoleController.setOfferedTo);
 router.get('/:role_id/applicants', RoleController.viewApplicants);
 
 module.exports = router;

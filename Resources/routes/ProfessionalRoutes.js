@@ -4,6 +4,7 @@ const Router = express.Router();
 
 Router.get('/:username/films', ProfessionalController.getFilms);
 Router.get('/:username/created_roles', ProfessionalController.getCreatedRoles);
+Router.get('/:username/applied_roles', ProfessionalController.getAppliedRoles);
 Router.get('/:username', ProfessionalController.getOne);
 Router.get('/', ProfessionalController.getAll);
 
