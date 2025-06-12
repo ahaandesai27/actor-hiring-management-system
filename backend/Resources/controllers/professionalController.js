@@ -90,24 +90,46 @@ const ProfessionalController = {
         try {
             const username = req.body.username;
             const role_id = parseInt(req.body.role_id);
-            console.log(username, role_id);
+            const audition_url = req.body.audition_url;
+            const paragraph = req.body.paragraph;
+            
+            console.log(username, role_id, audition_url, paragraph);
+            
             const professional = await Professional.findByPk(username);
             const role = await roles.findByPk(role_id);
+            
             if (!professional || !role) {
                 return res.status(404)
-                   .json({message: "Professional or role not found"});
+                .json({message: "Professional or role not found"});
             }
             else if (professional.profession !== role.role_for) {
                 return res.status(403)
-                   .json({message: "Cannot apply for this role!"});
-                 }
-            await Applications.create({professional: username, role_id});
+                .json({message: "Cannot apply for this role!"});
+            }
+            
+            // Check if already applied
+            const existingApplication = await Applications.findOne({
+                where: { professional: username, role_id }
+            });
+            
+            if (existingApplication) {
+                return res.status(409)
+                .json({message: "You have already applied for this role!"});
+            }
+            
+            await Applications.create({
+                professional: username, 
+                role_id,
+                audition_url,
+                paragraph
+            });
+            
             return res.status(201)
-               .json({message: "Applied successfully!"}); 
+            .json({message: "Applied successfully!"}); 
         }  catch (error) {
             console.log(error);
             return res.status(500).json({ message: error.message });
-           }   
+        }   
     },
 
     withdrawApplication: async (req, res) => {
