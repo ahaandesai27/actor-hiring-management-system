@@ -161,6 +161,26 @@ const RoleController = {
       res.status(500).json({ error: error.message });
     }
   },
+  setOfferedTo: async (req, res) => {
+    const { role_id } = req.params;
+    const { offered_to } = req.body;
+    console.log(role_id, offered_to);
+    
+    try {
+        const updatedRows = await roles.update(
+            { offered_to },
+            { where: { role_id: role_id } }
+        );
+
+        if (updatedRows[0] === 0) {
+            return res.status(404).json({ message: "Role not found!" });
+        }
+        
+        return res.status(200).json({ message: "Role offered successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 };
 
 module.exports = RoleController;

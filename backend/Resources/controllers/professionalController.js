@@ -90,7 +90,6 @@ const ProfessionalController = {
         try {
             const username = req.body.username;
             const role_id = parseInt(req.body.role_id);
-<<<<<<< Updated upstream
             const audition_url = req.body.audition_url;
             const paragraph = req.body.paragraph;
             
@@ -131,26 +130,6 @@ const ProfessionalController = {
             console.log(error);
             return res.status(500).json({ message: error.message });
         }   
-=======
-            console.log(username, role_id);
-            const professional = await Professional.findByPk(username);
-            const role = await roles.findByPk(role_id);
-            if (!professional || !role) {
-                return res.status(404)
-                   .json({message: "Professional or role not found"});
-            }
-            else if (professional.profession !== role.role_for) {
-                return res.status(403)
-                   .json({message: "Cannot apply for this role!"});
-                 }
-            await Applications.create({professional: username, role_id});
-            return res.status(201)
-               .json({message: "Applied successfully!"}); 
-        }  catch (error) {
-            console.log(error);
-            return res.status(500).json({ message: error.message });
-           }   
->>>>>>> Stashed changes
     },
 
     withdrawApplication: async (req, res) => {
@@ -255,6 +234,42 @@ const ProfessionalController = {
             }
     
             return res.status(200).json(createdRoles);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+
+    getAppliedRoles: async (req, res) => {
+        try {
+            const { username } = req.params;
+
+            const appliedRoles = await Applications.findAll({
+                where: { professional: username },
+                include: [
+                    {
+                        model: roles,
+                        include: {
+                            model: Film,
+                            attributes: ['film_id', 'title']
+                        }
+                    }
+                ],
+                attributes: ['audition_url', 'paragraph']
+            });
+
+            if (!appliedRoles || appliedRoles.length === 0) {
+                return res.status(404).json({ message: 'No applications found for this professional' });
+            }
+
+            // Transform the data to flatten the structure
+            const flattenedRoles = appliedRoles.map(application => ({
+                ...application.Role.dataValues,
+                Film: application.Role.Film,
+                audition_url: application.audition_url,
+                paragraph: application.paragraph
+            }));
+
+            return res.status(200).json(flattenedRoles);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

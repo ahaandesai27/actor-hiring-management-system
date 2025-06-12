@@ -42,6 +42,13 @@ const roles = db.define('Roles',{
             model: Films,
             key: 'film_id'
         }
+    },
+    deadline: {
+        type: DataTypes.DATE,
+        defaultValue: () => new Date(Date.now() + (14 * 24 * 60 * 60 * 1000))
+    },
+    offered_to: {
+        type: DataTypes.STRING
     }
 },{
     tableName: "roles",

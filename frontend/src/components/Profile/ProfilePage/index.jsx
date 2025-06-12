@@ -7,6 +7,7 @@ import Posts from "../../Posts/index";
 import Roles from "../../Roles/RolePage/RolePage";
 import { useUser } from "../../User/user";
 import Follows from "./Follows"; // import your Follows component
+import AppliedRoles from './AppliedRoles';
 import "./styles.css";
 
 
@@ -226,6 +227,14 @@ const ProfilePage = () => {
             Roles
           </button>
         )}
+        {(profession === "Actor") && (
+          <button
+            className={activeTab === "applications" ? "active" : ""}
+            onClick={() => setActiveTab("applications")}
+          >
+            Roles
+          </button>
+        )}
       </nav>
 
       {/* Content Section */}
@@ -234,6 +243,7 @@ const ProfilePage = () => {
         {activeTab === "posts" && <Posts username={username} />}
         {activeTab === "likes" && <Posts username={username} liked={true} />}
         {activeTab === "roles" && <Roles username={username} />}
+        {activeTab === "applications" && <AppliedRoles username={username} />}
       </div>
 
       {/* Modal for Followers / Following List */}

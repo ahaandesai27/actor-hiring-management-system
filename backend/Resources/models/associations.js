@@ -1,13 +1,17 @@
 const Professional = require('./Professional.js');
-
-// Films
 const Film = require('./Films.js');
 const WorkedOn = require('./WorkedOn.js');
+const Connections = require('./Connections.js');
+const roles = require('./Roles.js');
+const Applications = require('./Applications.js');
+const Posts = require('./Posts.js');
+const ProfessionalLikes = require('./ProfessionalLikes.js');
+
+// Films
 Professional.belongsToMany(Film, { through: WorkedOn, foreignKey: 'professional', otherKey: 'film' });
 Film.belongsToMany(Professional, { through: WorkedOn, foreignKey: 'film', otherKey: 'professional' });
 
 // Connections
-const Connections = require('./Connections.js');
 Professional.belongsToMany(Professional, {
   as: 'connections',
   through: Connections,
@@ -16,8 +20,6 @@ Professional.belongsToMany(Professional, {
 });
 
 // For roles
-const roles = require('./Roles.js');
-const Applications = require('./Applications.js');
 Professional.belongsToMany(roles, {through: Applications, foreignKey: 'professional', otherKey: 'role_id'});
 roles.belongsToMany(Professional, {through: Applications, foreignKey: 'role_id', otherKey: 'professional'});
 Professional.hasMany(roles, {
@@ -29,12 +31,16 @@ roles.belongsTo(Professional, {
   as: 'creatorDetails'
 });
 roles.belongsTo(Film, { foreignKey: 'film_id' });
-// organizations books locations
+roles.belongsTo(Professional, {
+  foreignKey: 'offered_to'
+})
+
+// Applications and Roles associations
+Applications.belongsTo(roles, { foreignKey: 'role_id' });
+roles.hasMany(Applications, { foreignKey: 'role_id' });
+
 
 // for posts
-const Posts = require('./Posts.js');
-const ProfessionalLikes = require('./ProfessionalLikes.js');
-
 Professional.belongsToMany(Posts, { through: ProfessionalLikes, foreignKey: 'professional', otherKey: 'post_id' });
 Posts.belongsToMany(Professional, { through: ProfessionalLikes, foreignKey: 'post_id', otherKey: 'professional' });
 ProfessionalLikes.belongsTo(Posts, { foreignKey: 'post_id', as: 'Post' });

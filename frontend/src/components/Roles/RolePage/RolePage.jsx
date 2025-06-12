@@ -72,8 +72,29 @@ function RolePage({ username = "" }) {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
+  const isDeadlinePassed = (deadline) => {
+    if (!deadline) return false;
+    const deadlineDate = new Date(deadline);
+    const currentDate = new Date();
+    return deadlineDate < currentDate;
+  };
+
+  const formatDeadline = (deadline) => {
+    if (!deadline) return "No deadline";
+    const deadlineDate = new Date(deadline);
+    return deadlineDate.toLocaleDateString();
+  };
+
   const applyForRole = async (role_id) => {
     navigate(`../roles/apply/${role_id}`);
+  };
+
+  const isRoleOffered = (role) => {
+    return role.offered_to && role.offered_to !== null;
+  };
+
+  const isOfferedToCurrentUser = (role) => {
+    return role.offered_to === userName;
   };
 
   return (
@@ -145,11 +166,6 @@ function RolePage({ username = "" }) {
         </form>
       )}
 
-      {/* the map is used to go thru each element obtained from
-                    the DB
-                    it is all wrapped inside a Card element
-                    the key={index} is required so that react can identify them
-                    the .toLocaleString() is used to convert it into readable date */}
       <div className="roles-list">
         {roles.map((role, index) => (
           <div key={index} className="role-card">
@@ -169,20 +185,79 @@ function RolePage({ username = "" }) {
                 <div>
                   <strong>Role For:</strong> {role.role_for}
                 </div>
+                <div>
+                  <strong>Deadline:</strong>{" "}
+                  <span
+                    className={
+                      isDeadlinePassed(role.deadline)
+                        ? "text-red-500 font-bold"
+                        : "text-green-600"
+                    }
+                  >
+                    {formatDeadline(role.deadline)}
+                    {isDeadlinePassed(role.deadline) && " (Expired)"}
+                  </span>
+                </div>
               </div>
+
+              {/* Role Offered Status */}
+              {isRoleOffered(role) && (
+                <div className="mt-4 p-3 rounded-lg border-2 border-white">
+                  {isOfferedToCurrentUser(role) ? (
+                    <div className="border-green-500 text-green-800">
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-2">🎉</span>
+                        <strong>Role has been offered to you!</strong>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-yellow">
+                      <div className="flex items-center">
+                        <span className="text-xl mr-2">📋</span>
+                        <strong className="text-red">
+                          This role has been offered.
+                        </strong>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {userName == username ? (
                 <button
-                  onClick={() => {window.location.href = `/roles/${role.role_id}/applicants`}}
-                  style={{ backgroundColor: '#22c55e', important: 'true' }}
+                  onClick={() => {
+                    window.location.href = `/roles/${role.role_id}/applicants`;
+                  }}
+                  style={{ backgroundColor: "#22c55e", important: "true" }}
                 >
-                  <div align="center">
-                    View Role Applicants
-                  </div>
+                  <div align="center">View Role Applicants</div>
                 </button>
               ) : (
-                <button onClick={() => applyForRole(role.role_id)}>
-                  <div align="center">Apply for role</div>
+                <button
+                  onClick={() => applyForRole(role.role_id)}
+                  disabled={
+                    isDeadlinePassed(role.deadline) || isRoleOffered(role)
+                  }
+                  className={
+                    isDeadlinePassed(role.deadline) || isRoleOffered(role)
+                      ? "bg-gray-500 cursor-not-allowed opacity-50"
+                      : "hover:bg-opacity-80"
+                  }
+                  title={
+                    isRoleOffered(role)
+                      ? "This role has already been offered"
+                      : isDeadlinePassed(role.deadline)
+                      ? "Application deadline has passed"
+                      : ""
+                  }
+                >
+                  <div align="center">
+                    {isRoleOffered(role)
+                      ? "Role Offered"
+                      : isDeadlinePassed(role.deadline)
+                      ? "Deadline Passed"
+                      : "Apply for role"}
+                  </div>
                 </button>
               )}
             </div>
