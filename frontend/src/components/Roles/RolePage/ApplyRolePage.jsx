@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import {useUser} from '../../User/user';
+<<<<<<< Updated upstream
 import apiurl from '../../../apiurl';
+=======
+>>>>>>> Stashed changes
 
 function formatDate(dateStr) {
   if (!dateStr) return 'N/A';
@@ -37,10 +40,13 @@ export default function ApplyRolePage() {
   const { userName } = useUser();
   const { roleId } = useParams();
   const [role, setRole] = useState(null);
+<<<<<<< Updated upstream
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoUrl, setVideoUrl] = useState('');
   const [paragraph, setParagraph] = useState('');
+=======
+>>>>>>> Stashed changes
 
   useEffect(() => {
     async function fetchRole() {
@@ -56,6 +62,7 @@ export default function ApplyRolePage() {
     fetchRole();
   }, [roleId]);
 
+<<<<<<< Updated upstream
   const handleVideoSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -125,6 +132,32 @@ export default function ApplyRolePage() {
       }
     }
   };
+=======
+  const handleApply = async () => {
+  try {
+    const response = await axios.post('http://localhost:5000/professional/apply', {
+      username: userName,
+      role_id: roleId,
+    });
+    alert(response.data.message);
+  } catch (e) {
+    // axios throws error for non 2xx responses
+    if (e.response) {
+      if (e.response.status === 403) {
+        alert("Cannot apply for this role as profile does not match!");
+      } else if (e.response.status === 404) {
+        alert("Professional or role not found.");
+      } else {
+        alert(e.response.data.message || "Error in applying for role!");
+      }
+    } else {
+      console.log(e);
+      alert("Network or server error!");
+    }
+  }
+};
+
+>>>>>>> Stashed changes
 
   if (!role)
     return (
@@ -164,6 +197,7 @@ export default function ApplyRolePage() {
         </div>
       </section>
 
+<<<<<<< Updated upstream
       {/* Paragraph Section */}
       <section className="mb-8">
         <div className="text-2xl font-bold text-yellow-300 mb-4">
@@ -245,6 +279,11 @@ export default function ApplyRolePage() {
             : 'bg-gray-600 cursor-not-allowed opacity-75'
         }`}
         disabled={!paragraph.trim() || (selectedVideo && !videoUrl)}
+=======
+      <button
+        onClick={handleApply}
+        className="self-start bg-red-700 hover:bg-red-800 transition-colors rounded-lg py-4 px-10 text-white text-3xl font-bold"
+>>>>>>> Stashed changes
       >
         Apply
       </button>
