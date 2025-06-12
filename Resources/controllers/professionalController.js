@@ -90,6 +90,7 @@ const ProfessionalController = {
         try {
             const username = req.body.username;
             const role_id = parseInt(req.body.role_id);
+<<<<<<< Updated upstream
             const audition_url = req.body.audition_url;
             const paragraph = req.body.paragraph;
             
@@ -130,6 +131,26 @@ const ProfessionalController = {
             console.log(error);
             return res.status(500).json({ message: error.message });
         }   
+=======
+            console.log(username, role_id);
+            const professional = await Professional.findByPk(username);
+            const role = await roles.findByPk(role_id);
+            if (!professional || !role) {
+                return res.status(404)
+                   .json({message: "Professional or role not found"});
+            }
+            else if (professional.profession !== role.role_for) {
+                return res.status(403)
+                   .json({message: "Cannot apply for this role!"});
+                 }
+            await Applications.create({professional: username, role_id});
+            return res.status(201)
+               .json({message: "Applied successfully!"}); 
+        }  catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: error.message });
+           }   
+>>>>>>> Stashed changes
     },
 
     withdrawApplication: async (req, res) => {
