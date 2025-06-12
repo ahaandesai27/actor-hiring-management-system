@@ -34,5 +34,5 @@ agent = Agent(
 )
 
 def run_agent(video):
-    response = agent.run(prompt=prompt, videos=[video])
+    response = agent.run(prompt, videos=[video])
     return response.content
