@@ -1,4 +1,3 @@
-import './App.css'
 import { Routes, Route } from 'react-router-dom';
 import {useUser} from './components/User/user.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx'
