@@ -76,6 +76,9 @@ const RoleController = {
   },
   getAll: async (req, res) => {
     try {
+      const skip = parseInt(req.query.skip || 0);
+      const limit = parseInt(req.query.limit || 8);
+      
       const role = await roles.findAll({
         include: {
           model: Film,
@@ -84,6 +87,8 @@ const RoleController = {
         attributes: {
           exclude: ["film_id"],
         },
+        offset: skip,
+        limit: limit
       });
 
       if (!role) {
@@ -100,7 +105,9 @@ const RoleController = {
       // search by creator, role for (actor/director), pay range
       const { creator, role_for } = req.query;
       const pay_ll = parseInt(req.query.pay_ll);
-      const pay_hl = parseInt(req.query.pay_hl)
+      const pay_hl = parseInt(req.query.pay_hl);
+      const skip = parseInt(req.query.skip || 0);
+      const limit = parseInt(req.query.limit || 8);
       
       const where = {};
       if (creator) where.creator = creator;
@@ -119,6 +126,8 @@ const RoleController = {
         attributes: {
           exclude: ["film_id"],
         },
+        offset: skip,
+        limit: limit
       });
 
       if (!Roles) {

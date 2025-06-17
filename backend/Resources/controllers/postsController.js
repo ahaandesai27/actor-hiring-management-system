@@ -17,7 +17,9 @@ const PostController = {
   },
   getAll: async (req, res) => {
     try {
-      const Posts = await Post.findAll();
+      const skip = parseInt(req.query.skip) || 0;
+      const limit = parseInt(req.query.limit) || 8;
+      const Posts = await Post.findAll({offset: skip, limit: limit});
       res.status(200).json(Posts);
     } catch (error) {
       res.status(500).json({ error: error.message });
