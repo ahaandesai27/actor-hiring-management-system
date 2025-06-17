@@ -1,21 +1,24 @@
-import { useState
-       , useEffect  
-       } from "react";
-import { Camera, Save, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Save } from "lucide-react";
 import axios from "axios";
 import '../ProfilePage/styles.css';
 import { useUser } from "../../User/user";
 import apiurl from "../../../apiurl";
+import EditImage from "./EditImage";
 
 function EditProfile() {
-  const {userName} = useUser();
-  const [name, setName] = useState("");
-  const [profession, setProfession] = useState("");
-  const [years_of_experience, setYoe] = useState("");
-  const [rating, setRating] = useState("");
+  const { userName } = useUser();
+  
+  // Single profile object to manage all data
+  const [profileData, setProfileData] = useState({
+    full_name: "",
+    profession: "",
+    years_of_experience: "",
+    rating: "",
+    profile_picture: ""
+  });
 
-  const [imagePreview, setImagePreview] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg");
 
   useEffect(() => {
     async function fetchProfessional() {
@@ -23,18 +26,18 @@ function EditProfile() {
         // fetch details from database 
         const response = await axios.get(`${apiurl}/professional/${userName}`);
         const professionalData = response.data;
-        console.log(professionalData);
-        setName(professionalData.full_name);
-        setProfession(
-          professionalData.profession.charAt(0).toUpperCase() +
-            professionalData.profession.slice(1)
-        );
-        setYoe(professionalData.years_of_experience);
-        setRating(professionalData.rating);
+
+        // Set the entire profile object at once
+        setProfileData({
+          full_name: professionalData.full_name,
+          profession: professionalData.profession.charAt(0).toUpperCase() + professionalData.profession.slice(1),
+          years_of_experience: professionalData.years_of_experience,
+          rating: professionalData.rating,
+          profile_picture: professionalData.profile_picture || ""
+        });
+        
         if (professionalData.profile_picture) {
-          setImagePreview(profile_picture);
-        } else {
-          setImagePreview("https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg");
+          setImagePreview(professionalData.profile_picture);
         }
         
       } catch (error) {
@@ -46,49 +49,23 @@ function EditProfile() {
     fetchProfessional();
   }, [userName]);
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
+  const handleInputChange = (field, value) => {
+    setProfileData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handleUploadClick = async () => {
-    if (!selectedFile) {
-      alert("Please select an image first.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append("upload_preset", "profile_picture");
-
-    try {
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUDNAME}/image/upload`,
-        formData
-      );
-      const data = response.data;
-      console.log(data.secure_url);
-      setImagePreview(data.secure_url);
-      setSelectedFile(null);
-      alert("Image uploaded!");
-    } catch (error) {
-      console.error(error);
-      alert("Image upload failed!");
-    }
+  // Function to handle image update from EditImage component
+  const handleImageUpdate = (newImageUrl) => {
+    setImagePreview(newImageUrl);
+    handleInputChange('profile_picture', newImageUrl);
   };
 
   const handleSave = async () => {
     try {
-      const info = {
-        full_name: name,
-        profession,
-        years_of_experience,
-        rating,
-        profile_picture: imagePreview
-      }
-      await axios.put(`${apiurl}/professional/${userName}`, {info});
+      // Send the entire profile object
+      await axios.put(`${apiurl}/professional/${userName}`, { info: profileData });
       alert("Profile saved successfully!");
     } catch (error) {
       alert("Failed to save profile!");
@@ -127,37 +104,19 @@ function EditProfile() {
           
           {/* Edit Form */}
           <div className="max-w-2xl mx-auto space-y-6">
-            {/* Image Upload */}
-            <div>
-              <label className="edit-label">Profile Image</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-                id="image-upload"
-              />
-              <label htmlFor="image-upload" className="image-upload-btn">
-                <Camera className="w-6 h-6" />
-                Click to select new image
-              </label>
-              <button
-                type="button"
-                className="ml-2 px-3 py-1 bg-blue-600 text-white rounded"
-                onClick={handleUploadClick}
-                disabled={!selectedFile}
-              >
-                Upload
-              </button>
-            </div>
+            {/* Image Upload Component */}
+            <EditImage 
+              imageUrl={imagePreview} 
+              onImageUpdate={handleImageUpdate}
+            />
                         
             {/* Name */}
             <div>
               <label className="edit-label">Full Name</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={profileData.full_name}
+                onChange={(e) => handleInputChange('full_name', e.target.value)}
                 className="edit-input"
                 placeholder="Enter full name"
               />
@@ -168,8 +127,8 @@ function EditProfile() {
               <label className="edit-label">Profession</label>
               <input
                 type="text"
-                value={profession}
-                onChange={(e) => setProfession(e.target.value)}
+                value={profileData.profession}
+                onChange={(e) => handleInputChange('profession', e.target.value)}
                 className="edit-input"
                 placeholder="Enter profession"
               />
@@ -180,8 +139,8 @@ function EditProfile() {
               <label className="edit-label">Years of Experience</label>
               <input
                 type="number"
-                value={years_of_experience}
-                onChange={(e) => setYoe(e.target.value)}
+                value={profileData.years_of_experience}
+                onChange={(e) => handleInputChange('years_of_experience', e.target.value)}
                 className="edit-input"
                 placeholder="Years of experience"
                 min="0"
@@ -194,8 +153,8 @@ function EditProfile() {
               <label className="edit-label">Rating (out of 10)</label>
               <input
                 type="number"
-                value={rating}
-                onChange={(e) => setRating(parseFloat(e.target.value))}
+                value={profileData.rating}
+                onChange={(e) => handleInputChange('rating', parseFloat(e.target.value))}
                 className="edit-input"
                 placeholder="Rating"
                 min="0"

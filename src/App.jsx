@@ -7,8 +7,8 @@ import HomePage from './components/Home/index.jsx';
 import Navbar from './components/Navbar.jsx';
 
 // auth
-import Login from './components/Auth/Login/Login.jsx';
-import SignIn from './components/Auth/SignIn/SignIn.jsx';
+import Login from './components/Auth/Login.jsx';
+import SignUp from './components/Auth/Signup/Signup.jsx';
 
 //profile page 
 import ProfilePage from './components/Profile/ProfilePage';
@@ -94,8 +94,8 @@ function App() {
       <Route path='/login' element={
           <Login />
       } />
-      <Route path='/signin' element={
-          <SignIn />
+      <Route path='/signup' element={
+          <SignUp />
       } />
 
       {/* Chats */}

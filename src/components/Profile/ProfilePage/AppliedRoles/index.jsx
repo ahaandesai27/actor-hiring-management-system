@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import apiurl from "../../../apiurl";
-import "../../Roles/RolePage/RolePagestyles.css";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../User/user";
+
+import apiurl from "../../../../apiurl";
+import { useUser } from "../../../User/user";
+import "./AppliedRolesStyles.css";
+
+// ...existing code...
 
 function RolePage({ username = "" }) {
   // initially empty
