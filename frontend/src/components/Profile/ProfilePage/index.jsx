@@ -1,47 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import apiurl from "../../../apiurl";
 import Filmography from "./Filmography";
 import Posts from "../../Posts/index";
 import Roles from "../../Roles/RolePage/RolePage";
 import { useUser } from "../../User/user";
-import Follows from "./Follows"; // import your Follows component
+import Follows from "./Follows/Follows"; 
+import Modal from "./Follows/Modal";
 import AppliedRoles from './AppliedRoles';
 import "./styles.css";
-
-
-const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Overlay with inline rgba for semi-transparent black */}
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.50)" }}
-        onClick={onClose}
-      />
-
-      {/* Modal box */}
-      <div className="relative w-80 bg-white rounded-xl shadow-lg p-6 max-h-[70vh] overflow-y-auto">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold"
-          aria-label="Close modal"
-        >
-          x
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-};
 
 
 const ProfilePage = () => {
   const username = useParams().username || useUser().userName;
   const accountUser = useUser().userName;
+  const navigate = useNavigate();
 
   // Active tab for navbar
   const [activeTab, setActiveTab] = useState("posts");
@@ -53,7 +27,6 @@ const ProfilePage = () => {
   const [rating, setRating] = useState(9.5);
   const [followers, setFollowers] = useState(10);
   const [following, setFollowing] = useState(15);
-  const [about, setAbout] = useState("About me.");
   const [isFollowing, setIsFollowing] = useState(false);
 
   // Profile picture
@@ -127,6 +100,11 @@ const ProfilePage = () => {
     }
   }
 
+  // New handler for edit profile navigation
+  const handleEditProfile = () => {
+    navigate('/profile/edit');
+  };
+
   // New handlers to open modal with followers or following
   const openFollowers = () => {
     setShowFollowingList(false);
@@ -188,14 +166,23 @@ const ProfilePage = () => {
           <div className="text-xl text-gold">
             {profession} | {yoe}+ Years of Experience
           </div>
-          {accountUser != username && (
-            <div className="flex space-x-6 mt-4">
-              <button className="msg-btn" onClick={handleFollow}>
-                {isFollowing ? "Unfollow" : "Follow"}
+          <div className="flex space-x-6 mt-4">
+            {accountUser != username ? (
+              <>
+                <button className="msg-btn" onClick={handleFollow}>
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </button>
+                <button className="msg-btn">Message</button>
+              </>
+            ) : (
+              <button 
+                className="bg-gold hover:bg-yellow-600 text-black px-6 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                onClick={handleEditProfile}
+              >
+                Edit Profile
               </button>
-              <button className="msg-btn">Message</button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 

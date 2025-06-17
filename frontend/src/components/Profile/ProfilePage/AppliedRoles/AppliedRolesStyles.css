@@ -1,0 +1,82 @@
+:root {
+  --gold: #D4AF37;
+  --black: #1b1818;
+  --dark-red: rgb(87, 6, 6);
+}
+
+.role-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.role-card-content button {
+  width: 100%;
+  background-color: var(--gold);
+  color: var(--black);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: auto;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.role-card-content button:hover {
+  background-color: #c49b2e;
+}
+
+.movie-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.role-card-content p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.role-card-content strong {
+  color: white;
+}
+
+
+.role-card-content strong {
+  color: white;
+}
+
+.roles-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(480px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.role-card {
+  background-color: var(--black);
+  border: 1px solid var(--gold);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.role-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.role-info-grid {
+  color: white;
+}
