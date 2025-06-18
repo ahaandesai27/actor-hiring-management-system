@@ -7,11 +7,12 @@ import Outgoing from "./Messages/Outgoing";
 import useChat from "./Hooks/useChats";
 import sendMessage from "./sendMessage";
 
-const Chat = ({ receiver }) => {
-  const sender = useUser().userName;
-  console.log("Just console logged:", sender, receiver)
+const Chat = (receiver) => {
+  const s = useUser().userName;
+  const r = receiver.reciever;
+  console.log("Just console logged:", s, r);
 
-  if (sender == receiver) {
+  if (s == r) {
     return (
       <h1 className="text-white text-center text-4xl font-bold mt-10">
         Cannot chat with yourself!
@@ -20,13 +21,13 @@ const Chat = ({ receiver }) => {
   }
 
   const message = useRef();
-  const messages = useChat(sender, receiver);
+  const messages = useChat(s, r);
 
   const handleSend = (event) => {
     event.preventDefault();
     if (!message || !message.current.value.trim()) return;
 
-    sendMessage(sender, receiver, message.current.value.trim());
+    sendMessage(s, r, message.current.value.trim());
     message.current.value = "";
   };
 
@@ -49,7 +50,7 @@ const Chat = ({ receiver }) => {
                   {currentDate}
                 </div>
               )}
-              {msg.sender === sender ? (
+              {msg.sender === s ? (
                 <Outgoing message={msg} />
               ) : (
                 <Incoming message={msg} />

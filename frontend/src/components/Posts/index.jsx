@@ -1,123 +1,122 @@
 import {
-  useState, useEffect
-  , useRef
+  useState, useEffect, useRef, useCallback
 } from "react";
 import axios from "axios";
 import apiurl from "../../apiurl";
 import { useUser } from "../User/user";
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import "./style.css";
 
 import CreatePost from "./createPost";
+import PostItem from "./PostItem";
 
 const Posts = ({ username = "", liked = false }) => {
   const [posts, setPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [postLikeCounts, setPostLikeCounts] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
   const { userName } = useUser();
-  const postRef = useRef(null);
+  const observer = useRef();
 
-  useEffect(() => {
-    async function fetchPosts() {
+  const POSTS_PER_PAGE = 8;
+
+  // Ref for the last post element to observe - when we land on this element, the page will change and the fetch happens again
+  // as dependecies change 
+  const lastPostElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
+
+  const fetchPosts = async (pageNum = 1, append = false) => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
       let response;
-      if (username != "") {
+      const offset = (pageNum - 1) * POSTS_PER_PAGE;
+      
+      if (username !== "") {
         if (liked) {
-          response = await axios.get(`${apiurl}/post/liked/${username}`);
+          response = await axios.get(`${apiurl}/post/liked/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`);
         } else {
-          response = await axios.get(`${apiurl}/post/creator/${username}`);
+          response = await axios.get(`${apiurl}/post/creator/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`);
         }
       } else {
-        response = await axios.get(`${apiurl}/post`);
+        response = await axios.get(`${apiurl}/post?limit=${POSTS_PER_PAGE}&offset=${offset}`);
       }
 
       const postsResponse = response.data;
-      postsResponse.sort((a, b) => new Date(b.time) - new Date(a.time));
-      setPosts(postsResponse);
+      
+      // Check if we got fewer posts than requested (indicates no more posts)
+      if (postsResponse.length <= POSTS_PER_PAGE) {
+        setHasMore(false);
+      }
 
-      // Initialize hash map for like counts
-      const likeCounts = {};
+      if (append) {
+        setPosts(prevPosts => [...prevPosts, ...postsResponse]);
+      } else {
+        setPosts(postsResponse);
+      }
+
+      // Update like counts for new posts
+      const likeCounts = { ...postLikeCounts };
       postsResponse.forEach(post => {
         likeCounts[post.post_id] = post.likes;
       });
       setPostLikeCounts(likeCounts);
 
-      if (!liked) {
-        response = await axios.get(`${apiurl}/post/liked/${userName}`);
+      // Fetch liked posts for the current user (only on initial load)
+      if (pageNum === 1 && !liked) {
+        const likedResponse = await axios.get(`${apiurl}/post/liked/${userName}`);
+        const postIds = likedResponse.data.map(post => post.post_id);
+        setLikedPosts(new Set(postIds));
       }
-      const postIds = response.data.map(post => post.post_id);
-      setLikedPosts(new Set(postIds));
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
     }
-    fetchPosts();
-  }, []);
-
-  const formatTimeAgo = (timestamp) => {
-    const now = new Date();
-    const postTime = new Date(timestamp);
-    const diffInMs = now - postTime;
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    const diffInWeeks = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
-    const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30));
-    const diffInYears = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 365));
-
-    if (diffInMinutes < 1) return "just now";
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInDays < 7) return `${diffInDays}d ago`;
-    if (diffInWeeks < 4) return `${diffInWeeks}w ago`;
-    if (diffInMonths < 12) return `${diffInMonths}mo ago`;
-    return `${diffInYears}y ago`;
   };
 
-  const checkLiked = async (post_id) => {
-    let res = likedPosts.has(post_id);
-    return res;
-  };
+  useEffect(() => {
+    // Reset state when username or liked prop changes
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts(1, false);
+  }, [username, liked]);
 
+  useEffect(() => {
+    // Load more posts when page changes (but not on initial load) - when page changes, more posts are fetched 
+    if (page > 1) {
+      fetchPosts(page, true);
+    }
+  }, [page]);
 
-  const handleLike = async (post_id) => {
-    const isLiked = likedPosts.has(post_id);
-
+  const handleLikeToggle = (postId, newIsLiked) => {
     // Update UI immediately using hash maps for O(1) lookups and updates
     const newLikedPosts = new Set(likedPosts);
     const newPostLikeCounts = { ...postLikeCounts };
 
-    if (isLiked) {
-      newLikedPosts.delete(post_id);
-      newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) - 1;
+    if (newIsLiked) {
+      newLikedPosts.add(postId);
+      newPostLikeCounts[postId] = (newPostLikeCounts[postId] || 0) + 1;
     } else {
-      newLikedPosts.add(post_id);
-      newPostLikeCounts[post_id] = (newPostLikeCounts[post_id] || 0) + 1;
+      newLikedPosts.delete(postId);
+      newPostLikeCounts[postId] = (newPostLikeCounts[postId] || 0) - 1;
     }
 
     setLikedPosts(newLikedPosts);
     setPostLikeCounts(newPostLikeCounts);
-
-    try {
-      if (isLiked) {
-        await axios.delete(`${apiurl}/post/like`, {
-          data: { professional: userName, post_id },
-        });
-        alert("Unliked successfully!");
-      } else {
-        await axios.post(`${apiurl}/post/like`, {
-          professional: userName,
-          post_id,
-        });
-        alert("Liked successfully!");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Action failed.");
-
-      // Revert changes on error using hash maps
-      const revertedLikedPosts = new Set(likedPosts);
-      const revertedPostLikeCounts = { ...postLikeCounts };
-
-      setLikedPosts(revertedLikedPosts);
-      setPostLikeCounts(revertedPostLikeCounts);
-    }
   };
 
   return (
@@ -127,84 +126,46 @@ const Posts = ({ username = "", liked = false }) => {
         <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
       </div>}
 
-      {(username == userName && <CreatePost /> )}
+      {(username === userName && <CreatePost />)}
       
       {/* Posts Feed */}
       <div className="space-y-0">
-        {posts.map((post) => (
-          <div key={post.post_id} className="bg-mydark border-b border-gold p-2">
-            {/* Post Header */}
-            <div className="p-4 pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center">
-                    <div className="text-white font-semibold text-sm">
-                      {post.creator.charAt(0).toUpperCase()}
-                    </div>
-                  </div>
-                  <div>
-                    <button
-                      className="font-semibold text-gold"
-                      onClick={() => {
-                        window.location.href = `/profile/${post.creator}`;
-                      }}
-                    >
-                      @{post.creator}
-                    </button>
-                    <p className="text-sm text-gray-500">
-                      {formatTimeAgo(post.time)}
-                    </p>
-                  </div>
-                </div>
-                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <MoreHorizontal className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-            </div>
-
-            {/* Post Content */}
-            <div className="px-4 pb-3">
-              <p className="text-white text-lg">{post.contents}</p>
-            </div>
-
-            {/* Post Actions */}
-            <div className="px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <button
-                  onClick={() => handleLike(post.post_id)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200 ${likedPosts.has(post.post_id)
-                    ? "text-red-600 hover:bg-red-100"
-                    : "like-button"
-                    }`}
-                >
-                  <Heart
-                    className={`w-5 h-5 ${likedPosts.has(post.post_id) ? "fill-current" : ""
-                      }`}
-                  />
-                  <span className="font-medium">{postLikeCounts[post.post_id] || post.likes}</span>
-                </button>
-
-                <button
-                  className="flex items-center space-x-2 px-3 py-2 rounded-full reply-button"
-                  onClick={() => {
-                    window.location.href = `/posts/${post.post_id}`;
-                  }}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  <span className="font-medium">Reply</span>
-                </button>
-              </div>
-            </div>
-          </div>
+        {posts.map((post, index) => (
+          <PostItem
+            key={post.post_id}
+            post={post}
+            isLiked={likedPosts.has(post.post_id)}
+            likeCount={postLikeCounts[post.post_id] || post.likes}
+            currentUser={userName}
+            onLikeToggle={handleLikeToggle}
+            ref={index === posts.length - 1 ? lastPostElementRef : null}
+          />
         ))}
       </div>
 
-      {/* Load More Button */}
-      <div className="p-6 text-center">
-        <button className="px-6 py-3 bg-red-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
-          Load More Posts
-        </button>
-      </div>
+      {/* Loading Indicator */}
+      {loading && (
+        <div className="p-6 text-center">
+          <div className="flex items-center justify-center space-x-2">
+            <Loader2 className="w-6 h-6 animate-spin text-gold" />
+            <span className="text-white">Loading more posts...</span>
+          </div>
+        </div>
+      )}
+
+      {/* End of Posts Message */}
+      {!hasMore && posts.length > 0 && (
+        <div className="p-6 text-center">
+          <p className="text-gray-500">You've reached the end of the posts!</p>
+        </div>
+      )}
+
+      {/* No Posts Message */}
+      {!loading && posts.length === 0 && (
+        <div className="p-6 text-center">
+          <p className="text-gray-500">No posts found.</p>
+        </div>
+      )}
     </div>
   );
 };

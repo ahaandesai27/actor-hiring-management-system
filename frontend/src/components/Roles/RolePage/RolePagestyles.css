@@ -54,7 +54,7 @@
 
 .roles-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(480px, 1fr));
+  grid-template-columns: repeat(auto, minmax(480px, 1fr));
   gap: 24px;
   margin-top: 20px;
 }
