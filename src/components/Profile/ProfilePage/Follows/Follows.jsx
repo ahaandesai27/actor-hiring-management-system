@@ -45,7 +45,7 @@ const Follows = ({ username, following = true }) => {
             return (
               <div
                 key={index}
-                onClick={() => navigate(`/profile/${username}`)}
+                onClick={() => window.location.href = `/profile/${username}`}
                 className="py-2 px-4 text-center hover:text-red-500 rounded-md transition cursor-pointer"
               >
                 {username}

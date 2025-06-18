@@ -9,6 +9,7 @@ import { useUser } from "../../User/user";
 import Follows from "./Follows/Follows"; 
 import Modal from "./Follows/Modal";
 import AppliedRoles from './AppliedRoles';
+import addToChat from "./addToChat";
 import "./styles.css";
 
 
@@ -16,6 +17,11 @@ const ProfilePage = () => {
   const username = useParams().username || useUser().userName;
   const accountUser = useUser().userName;
   const navigate = useNavigate();
+
+  function addChatAndNavigate(accountUser, username) {
+    addToChat(accountUser, username);
+    navigate('/chat');
+  }
 
   // Active tab for navbar
   const [activeTab, setActiveTab] = useState("posts");
@@ -172,7 +178,7 @@ const ProfilePage = () => {
                 <button className="msg-btn" onClick={handleFollow}>
                   {isFollowing ? "Unfollow" : "Follow"}
                 </button>
-                <button className="msg-btn">Message</button>
+                <button className="msg-btn" onClick={() => addChatAndNavigate(accountUser, username)}>Message</button>
               </>
             ) : (
               <button 

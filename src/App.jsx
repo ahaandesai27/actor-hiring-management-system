@@ -17,7 +17,6 @@ import EditProfile from './components/Profile/EditProfile/EditProfile.jsx';
 //roles 
 import ViewRoleApplicants from './components/Roles/RolePage/ViewRoleApplicants.jsx';
 import RolePage from './components/Roles/RolePage/RolePage.jsx';
-import ProfessionalRolesPage from './components/Roles/RolePage/ProfessionalRolesPage.jsx';
 import AddRole from './components/Roles/AddRole/AddRole.jsx';
 import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 
@@ -38,11 +37,6 @@ function App() {
       <Route path="/profile/edit" element={
         <ProtectedRoute>
           <><Navbar /> <EditProfile /></>
-        </ProtectedRoute>
-      } />
-      <Route path="/profile/:username/roles" element={
-        <ProtectedRoute>
-          <ProfessionalRolesPage />
         </ProtectedRoute>
       } />
       <Route path="/profile/:username" element={

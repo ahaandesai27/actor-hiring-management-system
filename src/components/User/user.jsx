@@ -8,6 +8,7 @@ export const UserProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || '');
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [userImage, setUserImage] = useState('');
   const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
@@ -16,13 +17,16 @@ export const UserProvider = ({ children }) => {
         const decoded = jwtDecode(accessToken);
         setUserName(decoded.username || '');
         setUserRole(decoded.role || '');
+        setUserImage(decoded.image || '');
       } catch (err) {
         setUserName('');
         setUserRole('');
+        setUserImage('');
       }
     } else {
       setUserName('');
       setUserRole('');
+      setUserImage('');
     }
     setIsAuthReady(true);
   }, [accessToken]);
@@ -38,12 +42,13 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setUserName('');
     setUserRole('');
+    setUserImage('');
     setAccessToken('');
     localStorage.clear();
   };
 
   return (
-    <UserContext.Provider value={{ userName, userRole, accessToken, updateUser, logout, isAuthReady }}>
+    <UserContext.Provider value={{ userName, userRole, userImage, accessToken, updateUser, logout, isAuthReady }}>
       {children}
     </UserContext.Provider>
   );

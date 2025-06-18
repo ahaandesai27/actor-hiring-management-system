@@ -4,6 +4,8 @@ import apiurl from "../../../apiurl";
 import "./RolePagestyles.css";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../User/user";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import RoleItem from "./RoleItem";
 
 function RolePage({ username = "" }) {
   // initially empty
@@ -14,33 +16,68 @@ function RolePage({ username = "" }) {
   const [roleFor, setRoleFor] = useState("");
   const [payLL, setPayLL] = useState(null);
   const [payHL, setPayHL] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalRoles, setTotalRoles] = useState(0);
+  const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
   const { userName } = useUser();
 
-  // this is a useEffect, this thing will run only once
-  // per page reload
-  // this is used because we want to get the roles data only
-  // once. '[]' has been put to tell react to run this only when it empty
-  // ie. when first opened or reloaded
-  useEffect(() => {
-    async function fetchRoles() {
-      try {
-        let response;
-        if (username !== "") {
-          response = await axios.get(
-            `${apiurl}/professional/${username}/created_roles`
-          );
-        } else {
-          response = await axios.get(`${apiurl}/roles/search`);
-        }
-        setRoles(response.data);
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-      }
-    }
+  const ROLES_PER_PAGE = 6;
 
-    fetchRoles();
-  }, [username]);
+  // Fetch roles with pagination
+  const fetchRoles = async (page = 1, filters = {}) => {
+    console.log(page, filters);
+    setLoading(true);
+    try {
+      let response;
+      const offset = (page - 1) * ROLES_PER_PAGE;
+      
+      if (username !== "") {
+        const url = `${apiurl}/professional/${username}/created_roles?limit=${ROLES_PER_PAGE}&skip=${offset}`;
+        response = await axios.get(url);
+      } else {
+        const queryParams = new URLSearchParams({
+          limit: ROLES_PER_PAGE,
+          skip: offset,
+          ...filters
+        });
+        const url = `${apiurl}/roles/search?${queryParams}`;
+        response = await axios.get(`${apiurl}/roles/search?${queryParams}`);
+      }
+      
+      const data = response.data;
+      
+      // Assuming your API returns { roles: [...], total: number }
+      // If your API structure is different, adjust accordingly
+      if (data.roles) {
+        setRoles(data.roles);
+        setTotalRoles(data.total || 0);
+        setTotalPages(Math.ceil((data.total || 0) / ROLES_PER_PAGE));
+      } else {
+        // Fallback if API returns array directly
+        setRoles(data);
+        setTotalRoles(data.length);
+        setTotalPages(Math.ceil(data.length / ROLES_PER_PAGE));
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      setRoles([]);
+      setTotalRoles(0);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles(currentPage);
+    setCurrentPage(currentPage);
+  }, [username, currentPage]);
+
   // arrow syntax for a function
   const sortRolesByDate = () => {
     // [...] creates a shallow copy, avoids direct changes
@@ -56,45 +93,78 @@ function RolePage({ username = "" }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await axios.get(
-      `http://localhost:5000/roles/search?creator=${creator}&role_for=${roleFor}&pay_ll=${payLL}&pay_hl=${payHL}`
-    );
-    setRoles(response.data);
+    setCurrentPage(1);
+    const filters = {
+      creator: creator || undefined,
+      role_for: roleFor || undefined,
+      pay_ll: payLL || undefined,
+      pay_hl: payHL || undefined
+    };
+    // Remove undefined values
+    Object.keys(filters).forEach(key => filters[key] === undefined && delete filters[key]);
+    
+    await fetchRoles(1, filters);
   };
 
   const clear = async (event) => {
     event.preventDefault();
-    const response = await axios.get(`http://localhost:5000/roles/search`);
-    setRoles(response.data);
-  };
-  const trimText = (text, maxLength = 75) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
-  const isDeadlinePassed = (deadline) => {
-    if (!deadline) return false;
-    const deadlineDate = new Date(deadline);
-    const currentDate = new Date();
-    return deadlineDate < currentDate;
+    setCreator("");
+    setRoleFor("");
+    setPayLL(null);
+    setPayHL(null);
+    setCurrentPage(1);
+    await fetchRoles(1);
   };
 
-  const formatDeadline = (deadline) => {
-    if (!deadline) return "No deadline";
-    const deadlineDate = new Date(deadline);
-    return deadlineDate.toLocaleDateString();
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page);
+      const filters = {
+        creator: creator || undefined,
+        role_for: roleFor || undefined,
+        pay_ll: payLL || undefined,
+        pay_hl: payHL || undefined
+      };
+      Object.keys(filters).forEach(key => filters[key] === undefined && delete filters[key]);
+      fetchRoles(page, filters);
+    }
   };
 
-  const applyForRole = async (role_id) => {
-    navigate(`../roles/apply/${role_id}`);
+  const goToFirstPage = () => handlePageChange(1);
+  const goToLastPage = () => handlePageChange(totalPages);
+  const goToPreviousPage = () => handlePageChange(currentPage - 1);
+  const goToNextPage = () => handlePageChange(currentPage + 1);
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2; // Show 2 pages before and after current page
+    const range = [];
+    const rangeWithDots = [];
+
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
   };
 
-  const isRoleOffered = (role) => {
-    return role.offered_to && role.offered_to !== null;
-  };
-
-  const isOfferedToCurrentUser = (role) => {
-    return role.offered_to === userName;
+  const handleApplyForRole = (roleId) => {
+    navigate(`../roles/apply/${roleId}`);
   };
 
   return (
@@ -146,124 +216,133 @@ function RolePage({ username = "" }) {
           <button
             type="submit"
             className="bg-red-600 p-2 rounded-lg mt-5 w-32 mr-3"
+            disabled={loading}
           >
-            Search
+            {loading ? "Searching..." : "Search"}
           </button>
           <button
             className="bg-green-600 p-2 rounded-lg mt-5 w-32 mr-3"
             onClick={sortRolesByDate}
+            disabled={loading}
           >
-            {" "}
-            Sort By Date{" "}
+            Sort By Date
           </button>
           <button
             className="bg-blue-400 p-2 rounded-lg mt-5 w-32"
             onClick={clear}
+            disabled={loading}
           >
-            {" "}
-            Clear{" "}
+            Clear
           </button>
         </form>
       )}
 
-      <div className="roles-list">
-        {roles.map((role, index) => (
-          <div key={index} className="role-card">
-            <div className="role-card-content">
-              <h3 className="movie-name">{role.Film.title}</h3>
+      {/* Results Info */}
+      {username === "" && (
+        <div className="px-6 py-2 text-gray-300">
+          Showing {roles.length > 0 ? ((currentPage - 1) * ROLES_PER_PAGE) + 1 : 0} - {Math.min(currentPage * ROLES_PER_PAGE, totalRoles)} of {totalRoles} roles
+        </div>
+      )}
 
-              <div className="role-info-grid">
-                <div>
-                  <strong>Role Type:</strong> {trimText(role.information)}
-                </div>
-                <div>
-                  <strong>Creator:</strong> {role.creator}
-                </div>
-                <div>
-                  <strong>Pay:</strong> {role.pay}
-                </div>
-                <div>
-                  <strong>Role For:</strong> {role.role_for}
-                </div>
-                <div>
-                  <strong>Deadline:</strong>{" "}
-                  <span
-                    className={
-                      isDeadlinePassed(role.deadline)
-                        ? "text-red-500 font-bold"
-                        : "text-green-600"
-                    }
-                  >
-                    {formatDeadline(role.deadline)}
-                    {isDeadlinePassed(role.deadline) && " (Expired)"}
-                  </span>
-                </div>
-              </div>
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <div className="text-gold">Loading roles...</div>
+        </div>
+      )}
 
-              {/* Role Offered Status */}
-              {isRoleOffered(role) && (
-                <div className="mt-4 p-3 rounded-lg border-2 border-white">
-                  {isOfferedToCurrentUser(role) ? (
-                    <div className="border-green-500 text-green-800">
-                      <div className="flex items-center">
-                        <span className="text-2xl mr-2">🎉</span>
-                        <strong>Role has been offered to you!</strong>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="border-yellow">
-                      <div className="flex items-center">
-                        <span className="text-xl mr-2">📋</span>
-                        <strong className="text-red">
-                          This role has been offered.
-                        </strong>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
+      {/* Roles List */}
+      {!loading && (
+        <div className="roles-list">
+          {roles.map((role, index) => (
+            <RoleItem
+              key={index}
+              role={role}
+              userName={userName}
+              username={username}
+              onApplyRole={handleApplyForRole}
+            />
+          ))}
+        </div>
+      )}
 
-              {userName == username ? (
-                <button
-                  onClick={() => {
-                    window.location.href = `/roles/${role.role_id}/applicants`;
-                  }}
-                  style={{ backgroundColor: "#22c55e", important: "true" }}
-                >
-                  <div align="center">View Role Applicants</div>
-                </button>
-              ) : (
-                <button
-                  onClick={() => applyForRole(role.role_id)}
-                  disabled={
-                    isDeadlinePassed(role.deadline) || isRoleOffered(role)
-                  }
-                  className={
-                    isDeadlinePassed(role.deadline) || isRoleOffered(role)
-                      ? "bg-gray-500 cursor-not-allowed opacity-50"
-                      : "hover:bg-opacity-80"
-                  }
-                  title={
-                    isRoleOffered(role)
-                      ? "This role has already been offered"
-                      : isDeadlinePassed(role.deadline)
-                      ? "Application deadline has passed"
-                      : ""
-                  }
-                >
-                  <div align="center">
-                    {isRoleOffered(role)
-                      ? "Role Offered"
-                      : isDeadlinePassed(role.deadline)
-                      ? "Deadline Passed"
-                      : "Apply for role"}
-                  </div>
-                </button>
-              )}
-            </div>
+      {/* No Results */}
+      {!loading && roles.length === 0 && (
+        <div className="text-center py-8 text-gray-400">
+          No roles found. Try adjusting your filters.
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {!loading && totalPages > 1 && (
+        <div className="flex flex-col items-center py-6 space-y-4">
+          {/* Page Info */}
+          <div className="text-gray-300 text-sm">
+            Page {currentPage} of {totalPages}
           </div>
-        ))}
-      </div>
+          
+          {/* Pagination Buttons */}
+          <div className="flex items-center space-x-2">
+            {/* First Page */}
+            <button
+              onClick={goToFirstPage}
+              disabled={currentPage === 1}
+              className="px-3 py-2 rounded-lg bg-gray-700 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+            >
+              First
+            </button>
+
+            {/* Previous Page */}
+            <button
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+              className="px-3 py-2 rounded-lg bg-gray-700 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors flex items-center"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex space-x-1">
+              {getPageNumbers().map((pageNum, index) => (
+                <button
+                  key={index}
+                  onClick={() => typeof pageNum === 'number' && handlePageChange(pageNum)}
+                  disabled={pageNum === '...' || pageNum === currentPage}
+                  className={`px-3 py-2 rounded-lg transition-colors ${
+                    pageNum === currentPage
+                      ? 'bg-gold text-black font-bold'
+                      : pageNum === '...'
+                      ? 'text-gray-400 cursor-default'
+                      : 'bg-gray-700 text-white hover:bg-gray-600'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+            </div>
+
+            {/* Next Page */}
+            <button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 rounded-lg bg-gray-700 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors flex items-center"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </button>
+
+            {/* Last Page */}
+            <button
+              onClick={goToLastPage}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 rounded-lg bg-gray-700 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-600 transition-colors"
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
