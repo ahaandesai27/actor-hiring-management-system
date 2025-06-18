@@ -26,7 +26,8 @@ const login = async(req, res) => {
       if (match) {
         const userInfo = {
             "username": foundUser.username,
-            "role": foundUser.profession
+            "role": foundUser.profession,
+            "image": foundUser.profile_picture,
         }
         const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {'expiresIn': '30d'})
         res.status(200).json({accessToken});

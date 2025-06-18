@@ -117,6 +117,8 @@ const RoleController = {
         if (pay_ll) where.pay[Op.gte] = Number(pay_ll);
         if (pay_hl) where.pay[Op.lte] = Number(pay_hl);
       }
+
+      // Get filtered roles with pagination
       const Roles = await roles.findAll({
         where,
         include: {
@@ -130,11 +132,13 @@ const RoleController = {
         limit: limit
       });
 
-      if (!Roles) {
-        return res.status(404).json({ message: "No roles found!" });
-      } else {
-        return res.status(200).json(Roles);
-      }
+      // Get total count of roles matching the filter
+      const total = await roles.count({ where });
+
+      return res.status(200).json({
+        roles: Roles,
+        total: total
+      });
 
     } catch (error) {
       res.status(500).json({ error: error.message });
