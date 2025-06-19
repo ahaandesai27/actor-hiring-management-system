@@ -20,6 +20,7 @@ app.use('/post', require('./Resources/routes/PostRoutes.js'));
 app.use('/comment', require('./Resources/routes/CommentRoutes.js'));
 app.use('/auth', require('./Resources/auth/route.js'));
 app.use('/ai', require('./Resources/ai/routes.js'));
+app.use('/recommend', require('./Resources/routes/RecommendedRoutes.js'));
 
 async function start() {
     try {
