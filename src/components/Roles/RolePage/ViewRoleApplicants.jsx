@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import BackNavbar from "../../Back";
+import BackNavbar from "../../Utils/Back";
 import axios from "axios";
 import apiurl from "../../../apiurl";
 

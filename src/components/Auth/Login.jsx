@@ -1,12 +1,10 @@
 import React, { useRef } from "react";
-import { useNavigate } from 'react-router-dom';
 import apiurl from '../../apiurl';
 import axios from "axios";
 
 function Login() {
     const usernameRef = useRef();
     const passwordRef = useRef();
-    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
       try {
