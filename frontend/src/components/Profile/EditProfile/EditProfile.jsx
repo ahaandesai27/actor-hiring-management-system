@@ -8,6 +8,10 @@ import EditImage from "./EditImage";
 
 function EditProfile() {
   const { userName } = useUser();
+
+  if (userName === 'readonly') {
+    return <h2>Cannot edit profile in preview mode.</h2>
+  }
   
   // Single profile object to manage all data
   const [profileData, setProfileData] = useState({

@@ -3,9 +3,12 @@ import { useEffect, useState } from "react";
 import BackNavbar from "../../Utils/Back";
 import axios from "axios";
 import apiurl from "../../../apiurl";
+import { useUser } from "../../User/user";
 
 function ViewRoleApplicants() {
   const { role_id } = useParams();
+  const { userName } = useUser();
+  const [creator, setCreator] = useState("");
   const [applicants, setApplicants] = useState([]);
   const [roleFor, setRoleFor] = useState("");
   const [showVideoModal, setShowVideoModal] = useState(false);
@@ -13,6 +16,11 @@ function ViewRoleApplicants() {
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
+  if (userName === "readonly" || userName !== creator) {
+    return (
+      <h2>You cannot view this page.</h2>
+    );
+  }
   useEffect(() => {
     async function fetchApplicants() {
       try {
@@ -24,6 +32,7 @@ function ViewRoleApplicants() {
         if (data.length > 0) {
           setRoleFor(data[0].role_for);
           setApplicants(data[0].Professionals);
+          setCreator(data[0].creator);
         }
       } catch (err) {
         console.error(err);

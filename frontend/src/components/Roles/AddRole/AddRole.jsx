@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import './styles.css';
+import { useUser } from "../../User/user";
 
 function AddRole() {
+    const {userRole} = useUser
+
+    if (userRole !== "director" || userRole !== "producer") {
+        return (
+            <div className="">
+                <h2>You are unable to add a role.</h2>
+            </div>
+        );
+    }
     const [role, setRole] = useState({
         role_id: "",
         information: "",

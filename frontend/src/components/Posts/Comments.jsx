@@ -84,7 +84,7 @@ const PostComments = () => {
       )}
 
       {/* Comment Input */}
-      <div className="p-6 border-t border-gold bg-mydark">
+      {userName !== 'readonly' && <div className="p-6 border-t border-gold bg-mydark">
         <textarea
           ref={newComment}
           placeholder="Write a comment..."
@@ -99,7 +99,7 @@ const PostComments = () => {
             Add Comment
           </button>
         </div>
-      </div>
+      </div>}
 
       {/* Comments Feed */}
       <div className="space-y-0">

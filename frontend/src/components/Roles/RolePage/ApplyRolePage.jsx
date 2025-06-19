@@ -42,6 +42,10 @@ export default function ApplyRolePage() {
   const [videoUrl, setVideoUrl] = useState('');
   const [paragraph, setParagraph] = useState('');
 
+  if (userName === 'readonly') {
+    return <h2>Cannot apply for roles in preview mode.</h2>
+  }
+
   useEffect(() => {
     async function fetchRole() {
       try {

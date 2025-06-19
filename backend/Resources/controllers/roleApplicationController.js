@@ -141,7 +141,7 @@ const RoleApplicationController = {
         try {
             const applicants = await roles.findAll({
                 where: { role_id },
-                attributes: ["role_id", "role_for"],
+                attributes: ["role_id", "role_for", "creator"],
                 include: {
                     model: Professional,
                     attributes: ["username", "rating"],

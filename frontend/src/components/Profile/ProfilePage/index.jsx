@@ -22,6 +22,11 @@ const ProfilePage = () => {
   const accountUser = useUser().userName;
   const navigate = useNavigate();
 
+  if (username == 'readonly') {
+    alert("In preview mode. Redirecting to sample user...");
+    window.location.href = "/profile/CNolan";
+  }
+
   function addChatAndNavigate(accountUser, username) {
     addToChat(accountUser, username);
     navigate('/chat');

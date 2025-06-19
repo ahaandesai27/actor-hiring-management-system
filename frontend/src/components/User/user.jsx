@@ -1,4 +1,3 @@
-// src/User/user.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 
@@ -39,6 +38,10 @@ export const UserProvider = ({ children }) => {
     setAccessToken(token);
   };
 
+  const setReadonlyUser = () => {
+    setAccessToken(''); // ensure decode doesn't run
+  };
+
   const logout = () => {
     setUserName('');
     setUserRole('');
@@ -48,7 +51,16 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ userName, userRole, userImage, accessToken, updateUser, logout, isAuthReady }}>
+    <UserContext.Provider value={{
+      userName,
+      userRole,
+      userImage,
+      accessToken,
+      updateUser,
+      logout,
+      isAuthReady,
+      setReadonlyUser,
+    }}>
       {children}
     </UserContext.Provider>
   );

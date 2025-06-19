@@ -37,7 +37,13 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="px-6 py-12">
         {/* Welcome Message */}
+        {userName === 'readonly' ? 
         <div className="text-center mb-8">
+          <h1 className="font-bold text-5xl text-gold mb-4">
+            You are previewing the application.
+          </h1>
+        </div>
+        : <div className="text-center mb-8">
           <h1 className="font-bold text-5xl text-gold mb-4">
             Welcome, {userName}
           </h1>
@@ -45,6 +51,7 @@ export default function HomePage() {
             Your entertainment industry hub awaits
           </p>
         </div>
+      }
 
         {/* Search Bar */}
         <div className="flex justify-center mb-12">
