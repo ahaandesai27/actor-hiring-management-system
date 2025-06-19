@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const RoleItem = ({ role, userName, username, onApplyRole }) => {
+const RoleItem = ({ role, accountUser, username, onApplyRole }) => {
   const navigate = useNavigate();
 
   const trimText = (text, maxLength = 75) => {
@@ -27,7 +27,7 @@ const RoleItem = ({ role, userName, username, onApplyRole }) => {
   };
 
   const isOfferedToCurrentUser = (role) => {
-    return role.offered_to === userName;
+    return role.offered_to === accountUser;
   };
 
   const handleApplyForRole = () => {
@@ -99,7 +99,7 @@ const RoleItem = ({ role, userName, username, onApplyRole }) => {
         )}
 
         {/* Action Buttons */}
-        {userName === username ? (
+        {accountUser === username ? (
           <button
             onClick={handleViewApplicants}
             style={{ backgroundColor: "#22c55e", important: "true" }}

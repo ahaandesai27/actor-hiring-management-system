@@ -10,7 +10,7 @@ import "./style.css";
 import CreatePost from "./createPost";
 import PostItem from "./PostItem";
 
-const Posts = ({ username = "", liked = false }) => {
+const Posts = ({ username = "", liked = false, recommended = false, pagination = true }) => {
   const [posts, setPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [postLikeCounts, setPostLikeCounts] = useState({});
@@ -24,7 +24,7 @@ const Posts = ({ username = "", liked = false }) => {
 
   // Ref for the last post element to observe - when we land on this element, the page will change and the fetch happens again
   // as dependecies change 
-  const lastPostElementRef = useCallback(node => {
+  const lastPostElementRef = pagination ? useCallback(node => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
@@ -33,7 +33,7 @@ const Posts = ({ username = "", liked = false }) => {
       }
     });
     if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
+  }, [loading, hasMore]) : null;      // disable pagniation whenever required by setting the ref to null
 
   const fetchPosts = async (pageNum = 1, append = false) => {
     if (loading) return;
@@ -42,8 +42,11 @@ const Posts = ({ username = "", liked = false }) => {
     try {
       let response;
       const offset = (pageNum - 1) * POSTS_PER_PAGE;
-      
-      if (username !== "") {
+
+      if (recommended) {
+        response = await axios.get(`${apiurl}/recommend/${userName}/recommended-posts`);
+      } 
+      else if (username !== "") {
         if (liked) {
           response = await axios.get(`${apiurl}/post/liked/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`);
         } else {
@@ -122,7 +125,7 @@ const Posts = ({ username = "", liked = false }) => {
   return (
     <div className="max-w-6xl mx-auto">
       
-      {(username !== userName) && <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
+      {(username !== userName && recommended == false) && <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
         <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
       </div>}
 

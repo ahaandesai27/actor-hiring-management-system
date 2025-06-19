@@ -1,10 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import {useUser} from './components/User/user.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+import ProtectedRoute from './components/Utils/ProtectedRoute.jsx'
 
 import LandingPage from './components/Landing/index.jsx';
 import HomePage from './components/Home/index.jsx';
-import Navbar from './components/Navbar.jsx';
+import Navbar from './components/Utils/Navbar.jsx';
 
 // auth
 import Login from './components/Auth/Login.jsx';
@@ -23,9 +23,12 @@ import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 //posts
 import Posts from './components/Posts/index.jsx';
 import Comments from './components/Posts/Comments.jsx';
+import CreatePost from './components/Posts/createPost.jsx';
 
 //chats 
 import ChatApp from './components/Chat/index.jsx';
+
+import NotFound from './components/Utils/404.jsx';
 
 
 function App() {
@@ -83,6 +86,11 @@ function App() {
           <><Navbar /> <Posts /></>
         </ProtectedRoute>
       } />
+      <Route path="/posts/add" element={
+        <ProtectedRoute>
+          <><Navbar /> <CreatePost /></>
+        </ProtectedRoute>
+      } />
 
       {/* Auth */}
       <Route path='/login' element={
@@ -114,6 +122,8 @@ function App() {
 
       {/* Public Landing Page */}
       <Route path="/" element={<LandingPage />} />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

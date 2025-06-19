@@ -66,7 +66,7 @@ const CreatePost = () => {
         </div>
         <textarea
           ref={postRef}
-          className="bg-mydark p-5 w-full rounded-md mt-4 border border-gold focus:outline-none focus:ring-0 focus:border-transparent"
+          className="bg-mydark p-5 w-full rounded-md text-white mt-4 border border-gold focus:outline-none focus:ring-0 focus:border-transparent"
           placeholder="What's Happening?"
           disabled={loadingAI || loadingPost}
         ></textarea>

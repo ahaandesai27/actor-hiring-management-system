@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useUser } from "../../User/user";
 import axios from "axios";
 import apiurl from "../../../apiurl";
+import addToChat from "./addToChat";
+import handleFollow from "./Follows/handleFollow";
+import "./styles.css";
+
+// Components 
 import Filmography from "./Filmography";
 import Posts from "../../Posts/index";
 import Roles from "../../Roles/RolePage/RolePage";
-import { useUser } from "../../User/user";
 import Follows from "./Follows/Follows"; 
 import Modal from "./Follows/Modal";
 import AppliedRoles from './AppliedRoles';
-import addToChat from "./addToChat";
-import "./styles.css";
-
+import Loading from '../../Utils/Loading';
+import { set } from "firebase/database";
 
 const ProfilePage = () => {
   const username = useParams().username || useUser().userName;
@@ -34,6 +38,7 @@ const ProfilePage = () => {
   const [followers, setFollowers] = useState(10);
   const [following, setFollowing] = useState(15);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Profile picture
   const [imageUrl, setImageUrl] = useState("https://i.pinimg.com/736x/62/01/0d/62010d848b790a2336d1542fcda51789.jpg");
@@ -45,6 +50,7 @@ const ProfilePage = () => {
   useEffect(() => {
     async function fetchProfessional() {
       try {
+        setLoading(true);
         // fetch details from database 
         const response = await axios.get(`${apiurl}/professional/${username}`);
         const professionalData = response.data;
@@ -68,8 +74,7 @@ const ProfilePage = () => {
           setIsFollowing(followResponse.data.isFollowing);
         }
 
-        // fetch profile picture
-        
+        setLoading(false);
       } catch (error) {
         alert(error);
         console.error(error);
@@ -79,32 +84,6 @@ const ProfilePage = () => {
     fetchProfessional();
   }, [username]);
 
-  async function handleFollow() {
-    try {
-      if (isFollowing === false) {
-        await axios.post(`${apiurl}/connections/follow`, {
-          professional1: accountUser,
-          professional2: username,
-        });
-
-        alert("Followed successfully!");
-        setIsFollowing(true);
-      } else {
-        await axios.delete(`${apiurl}/connections/unfollow`, {
-          data: {
-            professional1: accountUser,
-            professional2: username,
-          },
-        });
-
-        alert("Unfollowed successfully!");
-        setIsFollowing(false);
-      }
-    } catch (error) {
-      console.error("Follow/unfollow request failed:", error);
-      alert("Something went wrong. Please try again later.");
-    }
-  }
 
   // New handler for edit profile navigation
   const handleEditProfile = () => {
@@ -121,6 +100,16 @@ const ProfilePage = () => {
     setShowFollowingList(true);
     setShowModal(true);
   };
+
+  async function handleFollowClick() {
+    const result = await handleFollow(accountUser, username, isFollowing, setIsFollowing);
+    alert(result);
+    window.location.reload(); // Reload the page to reflect changes
+  }
+
+  if (loading) {
+    return <Loading message="Loading Profile..." />;
+  }
 
   return (
     <div className="bg-mydark text-white">
@@ -175,7 +164,7 @@ const ProfilePage = () => {
           <div className="flex space-x-6 mt-4">
             {accountUser != username ? (
               <>
-                <button className="msg-btn" onClick={handleFollow}>
+                <button className="msg-btn" onClick={handleFollowClick}>
                   {isFollowing ? "Unfollow" : "Follow"}
                 </button>
                 <button className="msg-btn" onClick={() => addChatAndNavigate(accountUser, username)}>Message</button>
