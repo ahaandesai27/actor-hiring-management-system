@@ -258,7 +258,7 @@ function RolePage({ username = "" }) {
             <RoleItem
               key={index}
               role={role}
-              userName={userName}
+              accountUser={userName}
               username={username}
               onApplyRole={handleApplyForRole}
             />

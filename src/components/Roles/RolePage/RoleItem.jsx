@@ -99,44 +99,48 @@ const RoleItem = ({ role, accountUser, username, onApplyRole }) => {
         )}
 
         {/* Action Buttons */}
-        {accountUser === username ? (
-          <button
-            onClick={handleViewApplicants}
-            style={{ backgroundColor: "#22c55e", important: "true" }}
-          >
-            <div align="center">View Role Applicants</div>
-          </button>
-        ) : (
-          <button
-            onClick={handleApplyForRole}
-            disabled={
-              isDeadlinePassed(role.deadline) || isRoleOffered(role)
-            }
-            className={
-              isDeadlinePassed(role.deadline) || isRoleOffered(role)
-                ? "bg-gray-500 cursor-not-allowed opacity-50"
-                : "hover:bg-opacity-80"
-            }
-            title={
-              isRoleOffered(role)
-                ? "This role has already been offered"
-                : isDeadlinePassed(role.deadline)
-                ? "Application deadline has passed"
-                : ""
-            }
-          >
-            <div align="center">
-              {isRoleOffered(role)
-                ? "Role Offered"
-                : isDeadlinePassed(role.deadline)
-                ? "Deadline Passed"
-                : "Apply for role"}
-            </div>
-          </button>
+        {/* Action Buttons */}
+        {accountUser == 'readonly' ? <></> : (
+          accountUser === username ? (
+            <button
+              onClick={handleViewApplicants}
+              style={{ backgroundColor: "#22c55e" }}
+            >
+              <div align="center">View Role Applicants</div>
+            </button>
+          ) : (
+            <button
+              onClick={handleApplyForRole}
+              disabled={
+                isDeadlinePassed(role.deadline) || isRoleOffered(role)
+              }
+              className={
+                isDeadlinePassed(role.deadline) || isRoleOffered(role)
+                  ? "bg-gray-500 cursor-not-allowed opacity-50"
+                  : "hover:bg-opacity-80"
+              }
+              title={
+                isRoleOffered(role)
+                  ? "This role has already been offered"
+                  : isDeadlinePassed(role.deadline)
+                    ? "Application deadline has passed"
+                    : ""
+              }
+            >
+              <div align="center">
+                {isRoleOffered(role)
+                  ? "Role Offered"
+                  : isDeadlinePassed(role.deadline)
+                    ? "Deadline Passed"
+                    : "Apply for role"}
+              </div>
+            </button>
+          )
         )}
+
       </div>
     </div>
   );
 };
 
-export default RoleItem;
+export default RoleItem;  

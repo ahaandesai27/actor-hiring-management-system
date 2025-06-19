@@ -10,7 +10,7 @@ import "./style.css";
 import CreatePost from "./createPost";
 import PostItem from "./PostItem";
 
-const Posts = ({ username = "", liked = false, recommended = false, pagination = true }) => {
+const Posts = ({ username = "", liked = false, pagination = true }) => {
   const [posts, setPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [postLikeCounts, setPostLikeCounts] = useState({});
@@ -22,44 +22,48 @@ const Posts = ({ username = "", liked = false, recommended = false, pagination =
 
   const POSTS_PER_PAGE = 8;
 
-  // Ref for the last post element to observe - when we land on this element, the page will change and the fetch happens again
-  // as dependecies change 
-  const lastPostElementRef = pagination ? useCallback(node => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
+  // Ref for the last post element to observe
+  const lastPostElementRef = useCallback(node => {
+    if (loading || !pagination) return; // Respect pagination prop
+
+    if (observer.current) observer.current.disconnect();    // Disconnect previous observer
+
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore) {
         setPage(prevPage => prevPage + 1);
       }
     });
+    // create a new observer for the last post element 
+    
     if (node) observer.current.observe(node);
-  }, [loading, hasMore]) : null;      // disable pagniation whenever required by setting the ref to null
+  }, [loading, hasMore, pagination]);
 
   const fetchPosts = async (pageNum = 1, append = false) => {
     if (loading) return;
     setLoading(true);
 
     try {
-      let response;
       const offset = (pageNum - 1) * POSTS_PER_PAGE;
 
-      if (recommended) {
-        response = await axios.get(`${apiurl}/recommend/${userName}/recommended-posts`);
-      } 
-      else if (username !== "") {
+      let url = "";
+
+      if (username !== "") {
         if (liked) {
-          response = await axios.get(`${apiurl}/post/liked/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`);
+          url = `${apiurl}/post/liked/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`;
         } else {
-          response = await axios.get(`${apiurl}/post/creator/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`);
+          url = `${apiurl}/post/creator/${username}?limit=${POSTS_PER_PAGE}&skip=${offset}`;
         }
       } else {
-        response = await axios.get(`${apiurl}/post?limit=${POSTS_PER_PAGE}&offset=${offset}`);
+        url = `${apiurl}/post?limit=${POSTS_PER_PAGE}&skip=${offset}`;
       }
+
+      console.log("Fetching from:", url);
+      const response = await axios.get(url);
 
       const postsResponse = response.data;
       
       // Check if we got fewer posts than requested (indicates no more posts)
-      if (postsResponse.length <= POSTS_PER_PAGE) {
+      if (postsResponse.length < POSTS_PER_PAGE) {
         setHasMore(false);
       }
 
@@ -77,10 +81,15 @@ const Posts = ({ username = "", liked = false, recommended = false, pagination =
       setPostLikeCounts(likeCounts);
 
       // Fetch liked posts for the current user (only on initial load)
-      if (pageNum === 1 && !liked) {
-        const likedResponse = await axios.get(`${apiurl}/post/liked/${userName}`);
-        const postIds = likedResponse.data.map(post => post.post_id);
-        setLikedPosts(new Set(postIds));
+      if (pageNum === 1 && !liked && userName) {
+        try {
+          const likedResponse = await axios.get(`${apiurl}/post/liked/${userName}`);
+          const postIds = likedResponse.data.map(post => post.post_id);
+          setLikedPosts(new Set(postIds));
+        } catch (likedError) {
+          console.error("Error fetching liked posts:", likedError);
+          // Continue without liked posts data
+        }
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -91,15 +100,17 @@ const Posts = ({ username = "", liked = false, recommended = false, pagination =
   };
 
   useEffect(() => {
-    // Reset state when username or liked prop changes
+    // Reset state when username, liked, or recommended prop changes
     setPosts([]);
     setPage(1);
     setHasMore(true);
+    setPostLikeCounts({});
+    setLikedPosts(new Set());
     fetchPosts(1, false);
-  }, [username, liked]);
+  }, [username, liked, userName]); // Added missing dependencies
 
   useEffect(() => {
-    // Load more posts when page changes (but not on initial load) - when page changes, more posts are fetched 
+    // Load more posts when page changes (but not on initial load)
     if (page > 1) {
       fetchPosts(page, true);
     }
@@ -125,11 +136,13 @@ const Posts = ({ username = "", liked = false, recommended = false, pagination =
   return (
     <div className="max-w-6xl mx-auto">
       
-      {(username !== userName && recommended == false) && <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
-        <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
-      </div>}
+      {username !== userName && (
+        <div className="bg-mydark border-b border-gold p-4 top-0 z-10">
+          <h1 className="text-3xl text-center p-4 font-bold text-gold">Posts</h1>
+        </div>
+      )}
 
-      {(username === userName && <CreatePost />)}
+      {username === userName && <CreatePost />}
       
       {/* Posts Feed */}
       <div className="space-y-0">
@@ -141,7 +154,7 @@ const Posts = ({ username = "", liked = false, recommended = false, pagination =
             likeCount={postLikeCounts[post.post_id] || post.likes}
             currentUser={userName}
             onLikeToggle={handleLikeToggle}
-            ref={index === posts.length - 1 ? lastPostElementRef : null}
+            ref={pagination && index === posts.length - 1 ? lastPostElementRef : null}
           />
         ))}
       </div>

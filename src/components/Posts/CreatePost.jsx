@@ -57,7 +57,9 @@ const CreatePost = () => {
     }
     };
 
-
+  if (userName == "readonly") {
+    return <h2> Cannot create posts in preview mode.</h2>
+  }
   return (
     <div className="max-w-6xl mx-auto">
       <div>
