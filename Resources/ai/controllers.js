@@ -31,7 +31,6 @@ Now, please enhance this draft post:
 
 Respond with only the enhanced post text. Also no quotes please.
 `;
-        console.log(prompt);
 
         try {
             const completion = await openai.chat.completions.create({

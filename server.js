@@ -29,7 +29,7 @@ async function start() {
             console.log("Server running on port 5000");
         })
     } catch (error) {
-    console.error('Unable to start the server:', error);
+        console.error('Unable to start the server:', error);
     }
 }
 
