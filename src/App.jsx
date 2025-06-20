@@ -23,7 +23,7 @@ import ApplyRolePage from './components/Roles/RolePage/ApplyRolePage.jsx';
 //posts
 import Posts from './components/Posts/index.jsx';
 import Comments from './components/Posts/Comments.jsx';
-import CreatePost from './components/Posts/createPost.jsx';
+import CreatePost from './components/Posts/CreatePost.jsx';
 
 //chats 
 import ChatApp from './components/Chat/index.jsx';

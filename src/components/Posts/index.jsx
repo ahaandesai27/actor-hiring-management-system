@@ -7,8 +7,8 @@ import { useUser } from "../User/user";
 import { Loader2 } from "lucide-react";
 import "./style.css";
 
-import CreatePost from "./createPost";
-import PostItem from "./PostItem";
+import CreatePost from "./CreatePost.jsx";
+import PostItem from "./PostItem.jsx";
 
 const Posts = ({ username = "", liked = false, pagination = true }) => {
   const [posts, setPosts] = useState([]);
