@@ -6,5 +6,9 @@ httpx==0.27.0
 boto3==1.34.115
 google-generativeai==0.5.2
 agno==1.6.3
-google-genai
+google-genai==1.21.1
+
+# Force pure Python versions to avoid Rust/Cargo builds
 pydantic-core==2.16.3
+orjson==3.9.12
+ujson==5.8.0
